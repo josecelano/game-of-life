@@ -22,7 +22,7 @@ pub fn format_grid(grid: &Grid) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::{cell::Cell, grid::Grid, grid_printer::format_grid};
+    use crate::{cell::Cell, cell_row::CellRow, grid::Grid, grid_printer::format_grid};
 
     #[test]
     fn it_should_print_an_empty_grid() {
@@ -33,30 +33,26 @@ mod tests {
 
     #[test]
     fn it_should_print_a_grid_with_only_one_live_cell() {
-        let grid = Grid::new(1, 1, vec![Cell::live()]);
+        let grid = Grid::new(vec![CellRow::new(vec![Cell::live()])]);
 
         assert_eq!(format_grid(&grid), "⬜\n");
     }
 
     #[test]
     fn it_should_print_a_grid_with_only_one_dead_cell() {
-        let grid = Grid {
-            rows: 1,
-            columns: 1,
-            cells: vec![Cell::dead()],
-        };
+        let grid = Grid::new(vec![CellRow::new(vec![Cell::dead()])]);
 
         assert_eq!(format_grid(&grid), "⬛\n");
     }
 
     #[test]
-    fn it_should_print_a_2x2_grid() {
-        let grid = Grid {
-            rows: 2,
-            columns: 2,
-            cells: vec![Cell::live(), Cell::live(), Cell::dead(), Cell::dead()],
-        };
+    fn it_should_print_a_3x3_grid() {
+        let grid = Grid::new(vec![
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+            CellRow::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+        ]);
 
-        assert_eq!(format_grid(&grid), "⬜⬜\n⬛⬛\n");
+        assert_eq!(format_grid(&grid), "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜\n");
     }
 }

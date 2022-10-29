@@ -3,6 +3,15 @@ pub struct Cell {
     live: bool,
 }
 
+/// Cell from char representation
+pub fn c(state: char) -> Cell {
+    match state {
+        '⬜' => Cell::live(),
+        '⬛' => Cell::dead(),
+        _ => panic!("Invalid cell state"),
+    }
+}
+
 impl Cell {
     pub fn live() -> Self {
         Self { live: true }
