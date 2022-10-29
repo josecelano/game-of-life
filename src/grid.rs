@@ -8,16 +8,16 @@ pub struct Grid {
 
 impl Default for Grid {
     fn default() -> Self {
-        Self::new(0, 0)
+        Self::new(0, 0, vec![])
     }
 }
 
 impl Grid {
-    pub fn new(rows: u32, columns: u32) -> Self {
+    pub fn new(rows: u32, columns: u32, cells: Vec<Cell>) -> Self {
         Self {
             rows,
             columns,
-            cells: vec![Cell::live(); (rows * columns) as usize],
+            cells,
         }
     }
 
@@ -40,7 +40,7 @@ mod tests {
     use crate::{cell::Cell, grid::Grid};
 
     #[test]
-    fn a_grid_has_two_dimensions() {
+    fn a_grid_has_rows_and_columns() {
         let grid = Grid::default();
 
         assert_eq!(grid.rows(), 0);
@@ -48,7 +48,7 @@ mod tests {
     }
 
     #[test]
-    fn a_grid_contains_a_cell_in_each_position() {
+    fn a_1x1_grid_contains_one_cell_in_position_0_0() {
         let grid = Grid {
             rows: 1,
             columns: 1,
@@ -57,15 +57,4 @@ mod tests {
 
         assert!(grid.get_cell(0, 0).is_live());
     }
-
-    // todo: 
-    // a_grid_should_panic_when_accessing_an_invalid_position
-    // the_default_grid_does_not_contain_any_cell
-
-    // notas:
-    // si permito crearlo dinámicamente el tamaño no tengo que permitir manipular
-    // rows y columns o el vector directamente una vez creado.
-    // Podría extraer eso a una matriz peo por ahora lo dejo en el grid.
-    // EL constructor acepta el vector de cualquier tamaño y lanzo exception
-    // si no coincidedn los datos.
 }

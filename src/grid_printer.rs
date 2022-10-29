@@ -7,12 +7,15 @@ pub fn print_grid(grid: &Grid) {
 
 pub fn format_grid(grid: &Grid) -> String {
     let mut output = String::new();
-    for cell in &grid.cells {
-        let cell_char = match cell.is_live() {
-            true => "⬜".to_string(),
-            false => "⬛".to_string(),
-        };
-        write!(&mut output, "{}", cell_char).unwrap();
+    for row in 0..grid.rows() {
+        for column in 0..grid.columns() {
+            let cell_char = match grid.get_cell(row, column).is_live() {
+                true => "⬜".to_string(),
+                false => "⬛".to_string(),
+            };
+            write!(&mut output, "{}", cell_char).unwrap();
+        }
+        writeln!(&mut output).unwrap();
     }
     output.to_string()
 }
@@ -30,9 +33,9 @@ mod tests {
 
     #[test]
     fn it_should_print_a_grid_with_only_one_live_cell() {
-        let grid = Grid::new(1, 1);
+        let grid = Grid::new(1, 1, vec![Cell::live()]);
 
-        assert_eq!(format_grid(&grid), "⬜");
+        assert_eq!(format_grid(&grid), "⬜\n");
     }
 
     #[test]
@@ -43,6 +46,17 @@ mod tests {
             cells: vec![Cell::dead()],
         };
 
-        assert_eq!(format_grid(&grid), "⬛");
+        assert_eq!(format_grid(&grid), "⬛\n");
+    }
+
+    #[test]
+    fn it_should_print_a_2x2_grid() {
+        let grid = Grid {
+            rows: 2,
+            columns: 2,
+            cells: vec![Cell::live(), Cell::live(), Cell::dead(), Cell::dead()],
+        };
+
+        assert_eq!(format_grid(&grid), "⬜⬜\n⬛⬛\n");
     }
 }
