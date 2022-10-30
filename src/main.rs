@@ -4,6 +4,7 @@ use grid::Grid;
 use grid_printer::print_grid;
 
 pub mod cell;
+pub mod cell_position;
 pub mod cell_row;
 pub mod grid;
 pub mod grid_printer;

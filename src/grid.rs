@@ -1,4 +1,4 @@
-use crate::{cell::Cell, cell_row::CellRow};
+use crate::{cell::Cell, cell_position::CellPosition, cell_row::CellRow};
 
 pub struct Grid {
     pub cell_rows: Vec<CellRow>,
@@ -42,8 +42,8 @@ impl Grid {
         self.number_of_cells() == 0
     }
 
-    pub fn get_cell(&self, row: usize, column: usize) -> &Cell {
-        self.cell_rows[row].get_cell(column)
+    pub fn get_cell(&self, pos: CellPosition) -> &Cell {
+        self.cell_rows[pos.row].get_cell(pos.column)
     }
 
     pub fn live_neighbors_for(&self, row: usize, column: usize) -> u32 {
@@ -54,45 +54,63 @@ impl Grid {
         let mut number_of_live_neighbors = 0;
 
         // Left top corner neighbor
-        if row == 0 || column == 0 || self.get_cell(row - 1, column - 1).is_live() {
+        if row == 0
+            || column == 0
+            || self
+                .get_cell(CellPosition::new(row - 1, column - 1))
+                .is_live()
+        {
             number_of_live_neighbors += 1;
         }
 
         // Top neighbor
-        if row == 0 || self.get_cell(row - 1, column).is_live() {
+        if row == 0 || self.get_cell(CellPosition::new(row - 1, column)).is_live() {
             number_of_live_neighbors += 1;
         }
 
         // Right top corner neighbor
-        if row == 0 || column == self.columns() - 1 || self.get_cell(row - 1, column + 1).is_live()
+        if row == 0
+            || column == self.columns() - 1
+            || self
+                .get_cell(CellPosition::new(row - 1, column + 1))
+                .is_live()
         {
             number_of_live_neighbors += 1;
         }
 
         // Left neighbor
-        if column == 0 || self.get_cell(row, column - 1).is_live() {
+        if column == 0 || self.get_cell(CellPosition::new(row, column - 1)).is_live() {
             number_of_live_neighbors += 1;
         }
 
         // Right neighbor
-        if column == self.columns() - 1 || self.get_cell(row, column + 1).is_live() {
+        if column == self.columns() - 1
+            || self.get_cell(CellPosition::new(row, column + 1)).is_live()
+        {
             number_of_live_neighbors += 1;
         }
 
         // Left bottom corner neighbor
-        if row == self.rows() - 1 || column == 0 || self.get_cell(row + 1, column - 1).is_live() {
+        if row == self.rows() - 1
+            || column == 0
+            || self
+                .get_cell(CellPosition::new(row + 1, column - 1))
+                .is_live()
+        {
             number_of_live_neighbors += 1;
         }
 
         // Bottom neighbor
-        if row == self.rows() - 1 || self.get_cell(row + 1, column).is_live() {
+        if row == self.rows() - 1 || self.get_cell(CellPosition::new(row + 1, column)).is_live() {
             number_of_live_neighbors += 1;
         }
 
         // Right Left bottom corner neighbor
         if row == self.rows() - 1
             || column == self.columns() - 1
-            || self.get_cell(row + 1, column + 1).is_live()
+            || self
+                .get_cell(CellPosition::new(row + 1, column + 1))
+                .is_live()
         {
             number_of_live_neighbors += 1;
         }

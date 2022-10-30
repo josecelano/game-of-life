@@ -1,4 +1,4 @@
-use crate::grid::Grid;
+use crate::{cell_position::CellPosition, grid::Grid};
 use std::fmt::Write;
 
 pub fn print_grid(grid: &Grid) {
@@ -9,7 +9,7 @@ pub fn format_grid(grid: &Grid) -> String {
     let mut output = String::new();
     for row in 0..grid.rows() {
         for column in 0..grid.columns() {
-            let cell_char = match grid.get_cell(row, column).is_live() {
+            let cell_char = match grid.get_cell(CellPosition::new(row, column)).is_live() {
                 true => "⬜".to_string(),
                 false => "⬛".to_string(),
             };
