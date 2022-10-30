@@ -34,8 +34,70 @@ impl Grid {
         self.cell_rows[0].len()
     }
 
+    pub fn number_of_cells(&self) -> usize {
+        self.rows() * self.columns()
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.number_of_cells() == 0
+    }
+
     pub fn get_cell(&self, row: usize, column: usize) -> &Cell {
         self.cell_rows[row].get_cell(column)
+    }
+
+    pub fn live_neighbors_for(&self, row: usize, column: usize) -> u32 {
+        if self.number_of_cells() == 1 {
+            return 0;
+        }
+
+        let mut number_of_live_neighbors = 0;
+
+        // Left top corner neighbor
+        if row == 0 || column == 0 || self.get_cell(row - 1, column - 1).is_live() {
+            number_of_live_neighbors += 1;
+        }
+
+        // Top neighbor
+        if row == 0 || self.get_cell(row - 1, column).is_live() {
+            number_of_live_neighbors += 1;
+        }
+
+        // Right top corner neighbor
+        if row == 0 || column == self.columns() - 1 || self.get_cell(row - 1, column + 1).is_live()
+        {
+            number_of_live_neighbors += 1;
+        }
+
+        // Left neighbor
+        if column == 0 || self.get_cell(row, column - 1).is_live() {
+            number_of_live_neighbors += 1;
+        }
+
+        // Right neighbor
+        if column == self.columns() - 1 || self.get_cell(row, column + 1).is_live() {
+            number_of_live_neighbors += 1;
+        }
+
+        // Left bottom corner neighbor
+        if row == self.rows() - 1 || column == 0 || self.get_cell(row + 1, column - 1).is_live() {
+            number_of_live_neighbors += 1;
+        }
+
+        // Bottom neighbor
+        if row == self.rows() - 1 || self.get_cell(row + 1, column).is_live() {
+            number_of_live_neighbors += 1;
+        }
+
+        // Right Left bottom corner neighbor
+        if row == self.rows() - 1
+            || column == self.columns() - 1
+            || self.get_cell(row + 1, column + 1).is_live()
+        {
+            number_of_live_neighbors += 1;
+        }
+
+        number_of_live_neighbors
     }
 }
 
@@ -84,5 +146,63 @@ mod tests {
             CellRow::new(vec![Cell::live()]),
             CellRow::new(vec![Cell::live(), Cell::live()]),
         ]);
+    }
+
+    #[test]
+    fn a_2x3_grid_contains_six_cells() {
+        let grid = Grid::new(vec![
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+        ]);
+
+        assert_eq!(grid.number_of_cells(), 6);
+    }
+
+    #[test]
+    fn a_grid_can_be_empty_if_it_does_not_contain_any_cell() {
+        let grid = Grid::new(vec![]);
+
+        assert!(grid.is_empty());
+    }
+
+    #[test]
+    fn a_cell_in_a_1x1_grid_does_not_have_any_live_neighbors() {
+        let grid = Grid::new(vec![CellRow::new(vec![Cell::live()])]);
+
+        assert_eq!(grid.live_neighbors_for(0, 0), 0);
+    }
+
+    #[test]
+    fn a_cell_in_the_center_of_a_3x3_grid_can_have_eight_live_neighbors() {
+        let grid = Grid::new(vec![
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+        ]);
+
+        assert_eq!(grid.live_neighbors_for(1, 1), 8);
+    }
+
+    fn all_live_3x3_grid() -> Grid {
+        Grid::new(vec![
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+        ])
+    }
+
+    #[test]
+    fn given_a_cell_without_neighbors_we_consider_them_live_neighbors() {
+        let grid = all_live_3x3_grid();
+
+        assert_eq!(grid.live_neighbors_for(0, 0), 8);
+        assert_eq!(grid.live_neighbors_for(0, 1), 8);
+        assert_eq!(grid.live_neighbors_for(0, 2), 8);
+        assert_eq!(grid.live_neighbors_for(1, 0), 8);
+        assert_eq!(grid.live_neighbors_for(1, 1), 8);
+        assert_eq!(grid.live_neighbors_for(1, 2), 8);
+        assert_eq!(grid.live_neighbors_for(2, 0), 8);
+        assert_eq!(grid.live_neighbors_for(2, 1), 8);
+        assert_eq!(grid.live_neighbors_for(2, 2), 8);
     }
 }
