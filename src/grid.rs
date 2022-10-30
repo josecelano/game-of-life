@@ -255,7 +255,7 @@ mod tests {
         assert_eq!(grid.live_neighbors_for(CellPosition::new(0, 1)), 8);
         assert_eq!(grid.live_neighbors_for(CellPosition::new(0, 2)), 8);
         assert_eq!(grid.live_neighbors_for(CellPosition::new(1, 0)), 8);
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(1, 1)), 8);
+        // Cell (1,1) has all the neighbors
         assert_eq!(grid.live_neighbors_for(CellPosition::new(1, 2)), 8);
         assert_eq!(grid.live_neighbors_for(CellPosition::new(2, 0)), 8);
         assert_eq!(grid.live_neighbors_for(CellPosition::new(2, 1)), 8);
