@@ -34,4 +34,5 @@ cargo test
 ## TODO
 
 - Extract function to detect if a CellPosition has a given neighbor: `CellPosition::has_top_left_neighbor() -> bool`.
+- After the extract, we could get a list of neighbors: `CellPosition::get_neighbor_positions(cell_pos: Self) -> Vec<CellPosition>` because we can use only valid neighbors in `Grid::live_neighbors_for(...)` and consider the rest live.
 - Integration test to run the main example, so that I do not have to run it manually.
