@@ -53,107 +53,199 @@ impl Grid {
 
         let mut number_of_live_neighbors = 0;
 
-        // Left top corner neighbor
-        if cell_position.row == 0
-            || cell_position.column == 0
-            || self
-                .get_cell(CellPosition::new(
-                    cell_position.row - 1,
-                    cell_position.column - 1,
-                ))
-                .is_live()
-        {
+        let left_top_corner_neighbor = self.left_top_neighbor(&cell_position);
+        if left_top_corner_neighbor.is_none() || left_top_corner_neighbor.unwrap().is_live() {
             number_of_live_neighbors += 1;
         }
 
-        // Top neighbor
-        if cell_position.row == 0
-            || self
-                .get_cell(CellPosition::new(
-                    cell_position.row - 1,
-                    cell_position.column,
-                ))
-                .is_live()
-        {
+        let top_neighbor = self.top_neighbor(&cell_position);
+        if top_neighbor.is_none() || top_neighbor.unwrap().is_live() {
             number_of_live_neighbors += 1;
         }
 
-        // Right top corner neighbor
-        if cell_position.row == 0
-            || cell_position.column == self.columns() - 1
-            || self
-                .get_cell(CellPosition::new(
-                    cell_position.row - 1,
-                    cell_position.column + 1,
-                ))
-                .is_live()
-        {
+        let right_top_neighbor = self.right_top_neighbor(&cell_position);
+        if right_top_neighbor.is_none() || right_top_neighbor.unwrap().is_live() {
             number_of_live_neighbors += 1;
         }
 
-        // Left neighbor
-        if cell_position.column == 0
-            || self
-                .get_cell(CellPosition::new(
-                    cell_position.row,
-                    cell_position.column - 1,
-                ))
-                .is_live()
-        {
+        let left_neighbor = self.left_neighbor(&cell_position);
+        if left_neighbor.is_none() || left_neighbor.unwrap().is_live() {
             number_of_live_neighbors += 1;
         }
 
-        // Right neighbor
-        if cell_position.column == self.columns() - 1
-            || self
-                .get_cell(CellPosition::new(
-                    cell_position.row,
-                    cell_position.column + 1,
-                ))
-                .is_live()
-        {
+        let right_neighbor = self.right_neighbor(&cell_position);
+        if right_neighbor.is_none() || right_neighbor.unwrap().is_live() {
             number_of_live_neighbors += 1;
         }
 
-        // Left bottom corner neighbor
-        if cell_position.row == self.rows() - 1
-            || cell_position.column == 0
-            || self
-                .get_cell(CellPosition::new(
-                    cell_position.row + 1,
-                    cell_position.column - 1,
-                ))
-                .is_live()
-        {
+        let left_bottom_neighbor = self.left_bottom_neighbor(&cell_position);
+        if left_bottom_neighbor.is_none() || left_bottom_neighbor.unwrap().is_live() {
             number_of_live_neighbors += 1;
         }
 
-        // Bottom neighbor
-        if cell_position.row == self.rows() - 1
-            || self
-                .get_cell(CellPosition::new(
-                    cell_position.row + 1,
-                    cell_position.column,
-                ))
-                .is_live()
-        {
+        let bottom_neighbor = self.bottom_neighbor(&cell_position);
+        if bottom_neighbor.is_none() || bottom_neighbor.unwrap().is_live() {
             number_of_live_neighbors += 1;
         }
 
-        // Right Left bottom corner neighbor
-        if cell_position.row == self.rows() - 1
-            || cell_position.column == self.columns() - 1
-            || self
-                .get_cell(CellPosition::new(
-                    cell_position.row + 1,
-                    cell_position.column + 1,
-                ))
-                .is_live()
-        {
+        let right_bottom_neighbor = self.right_bottom_neighbor(&cell_position);
+        if right_bottom_neighbor.is_none() || right_bottom_neighbor.unwrap().is_live() {
             number_of_live_neighbors += 1;
         }
 
         number_of_live_neighbors
+    }
+
+    fn left_top_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
+        if !self.has_left_top_neighbor(cell_position) {
+            return None;
+        }
+
+        Some(self.get_cell(CellPosition::new(
+            cell_position.row - 1,
+            cell_position.column - 1,
+        )))
+    }
+
+    fn has_left_top_neighbor(&self, cell_position: &CellPosition) -> bool {
+        !self.is_left_top_corner(cell_position)
+    }
+
+    fn is_left_top_corner(&self, cell_position: &CellPosition) -> bool {
+        cell_position.row == 0 || cell_position.column == 0
+    }
+
+    fn top_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
+        if !self.has_top_neighbor(cell_position) {
+            return None;
+        }
+
+        Some(self.get_cell(CellPosition::new(
+            cell_position.row - 1,
+            cell_position.column,
+        )))
+    }
+
+    fn has_top_neighbor(&self, cell_position: &CellPosition) -> bool {
+        !self.is_top_row(cell_position)
+    }
+
+    fn is_top_row(&self, cell_position: &CellPosition) -> bool {
+        cell_position.row == 0
+    }
+
+    fn right_top_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
+        if !self.has_right_top_neighbor(cell_position) {
+            return None;
+        }
+
+        Some(self.get_cell(CellPosition::new(
+            cell_position.row - 1,
+            cell_position.column + 1,
+        )))
+    }
+
+    fn has_right_top_neighbor(&self, cell_position: &CellPosition) -> bool {
+        !self.is_right_top_corner(cell_position)
+    }
+
+    fn is_right_top_corner(&self, cell_position: &CellPosition) -> bool {
+        cell_position.row == 0 || cell_position.column == self.columns() - 1
+    }
+
+    fn left_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
+        if !self.has_left_neighbor(cell_position) {
+            return None;
+        }
+
+        Some(self.get_cell(CellPosition::new(
+            cell_position.row,
+            cell_position.column - 1,
+        )))
+    }
+
+    fn has_left_neighbor(&self, cell_position: &CellPosition) -> bool {
+        !self.is_left_column(cell_position)
+    }
+
+    fn is_left_column(&self, cell_position: &CellPosition) -> bool {
+        cell_position.column == 0
+    }
+
+    fn right_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
+        if !self.has_right_neighbor(cell_position) {
+            return None;
+        }
+
+        Some(self.get_cell(CellPosition::new(
+            cell_position.row,
+            cell_position.column + 1,
+        )))
+    }
+
+    fn has_right_neighbor(&self, cell_position: &CellPosition) -> bool {
+        !self.is_right_column(cell_position)
+    }
+
+    fn is_right_column(&self, cell_position: &CellPosition) -> bool {
+        cell_position.column == self.columns() - 1
+    }
+
+    fn left_bottom_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
+        if !self.has_left_bottom_neighbor(cell_position) {
+            return None;
+        }
+
+        Some(self.get_cell(CellPosition::new(
+            cell_position.row + 1,
+            cell_position.column,
+        )))
+    }
+
+    fn has_left_bottom_neighbor(&self, cell_position: &CellPosition) -> bool {
+        !self.is_left_bottom_corner(cell_position)
+    }
+
+    fn is_left_bottom_corner(&self, cell_position: &CellPosition) -> bool {
+        cell_position.row == self.rows() - 1 || cell_position.column == 0
+    }
+
+    fn bottom_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
+        if !self.has_bottom_neighbor(cell_position) {
+            return None;
+        }
+
+        Some(self.get_cell(CellPosition::new(
+            cell_position.row + 1,
+            cell_position.column,
+        )))
+    }
+
+    fn has_bottom_neighbor(&self, cell_position: &CellPosition) -> bool {
+        !self.is_bottom_row(cell_position)
+    }
+
+    fn is_bottom_row(&self, cell_position: &CellPosition) -> bool {
+        cell_position.row == self.rows() - 1
+    }
+
+    fn right_bottom_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
+        if !self.has_right_bottom_neighbor(cell_position) {
+            return None;
+        }
+
+        Some(self.get_cell(CellPosition::new(
+            cell_position.row + 1,
+            cell_position.column + 1,
+        )))
+    }
+
+    fn has_right_bottom_neighbor(&self, cell_position: &CellPosition) -> bool {
+        !self.is_right_bottom_corner(cell_position)
+    }
+
+    fn is_right_bottom_corner(&self, cell_position: &CellPosition) -> bool {
+        cell_position.row == self.rows() - 1 || cell_position.column == self.columns() - 1
     }
 }
 
