@@ -46,54 +46,64 @@ impl Grid {
         self.cell_rows[pos.row].get_cell(pos.column)
     }
 
-    pub fn live_neighbors_for(&self, cell_position: CellPosition) -> u32 {
+    pub fn live_neighbors_for(&self, cell_position: CellPosition) -> usize {
         if self.number_of_cells() == 1 {
             return 0;
         }
 
-        let mut number_of_live_neighbors = 0;
+        let neighbors = self.get_neighbors(&cell_position);
 
-        let left_top_corner_neighbor = self.left_top_neighbor(&cell_position);
-        if left_top_corner_neighbor.is_none() || left_top_corner_neighbor.unwrap().is_live() {
-            number_of_live_neighbors += 1;
+        let live_neighbors =
+            neighbors
+                .iter()
+                .fold(0, |counter, neighbor| match neighbor.is_live() {
+                    true => counter + 1,
+                    false => counter,
+                });
+
+        // Strategy: every cell outside the array is live
+
+        let out_of_grid_neighbors = 8 - neighbors.len();
+
+        live_neighbors + out_of_grid_neighbors
+    }
+
+    fn get_neighbors(&self, cell_position: &CellPosition) -> Vec<&Cell> {
+        let mut neighbors = vec![];
+
+        if let Some(neighbor) = self.left_top_neighbor(cell_position) {
+            neighbors.push(neighbor);
         }
 
-        let top_neighbor = self.top_neighbor(&cell_position);
-        if top_neighbor.is_none() || top_neighbor.unwrap().is_live() {
-            number_of_live_neighbors += 1;
+        if let Some(neighbor) = self.top_neighbor(cell_position) {
+            neighbors.push(neighbor);
         }
 
-        let right_top_neighbor = self.right_top_neighbor(&cell_position);
-        if right_top_neighbor.is_none() || right_top_neighbor.unwrap().is_live() {
-            number_of_live_neighbors += 1;
+        if let Some(neighbor) = self.right_top_neighbor(cell_position) {
+            neighbors.push(neighbor);
         }
 
-        let left_neighbor = self.left_neighbor(&cell_position);
-        if left_neighbor.is_none() || left_neighbor.unwrap().is_live() {
-            number_of_live_neighbors += 1;
+        if let Some(neighbor) = self.left_neighbor(cell_position) {
+            neighbors.push(neighbor);
         }
 
-        let right_neighbor = self.right_neighbor(&cell_position);
-        if right_neighbor.is_none() || right_neighbor.unwrap().is_live() {
-            number_of_live_neighbors += 1;
+        if let Some(neighbor) = self.right_neighbor(cell_position) {
+            neighbors.push(neighbor);
         }
 
-        let left_bottom_neighbor = self.left_bottom_neighbor(&cell_position);
-        if left_bottom_neighbor.is_none() || left_bottom_neighbor.unwrap().is_live() {
-            number_of_live_neighbors += 1;
+        if let Some(neighbor) = self.left_bottom_neighbor(cell_position) {
+            neighbors.push(neighbor);
         }
 
-        let bottom_neighbor = self.bottom_neighbor(&cell_position);
-        if bottom_neighbor.is_none() || bottom_neighbor.unwrap().is_live() {
-            number_of_live_neighbors += 1;
+        if let Some(neighbor) = self.bottom_neighbor(cell_position) {
+            neighbors.push(neighbor);
         }
 
-        let right_bottom_neighbor = self.right_bottom_neighbor(&cell_position);
-        if right_bottom_neighbor.is_none() || right_bottom_neighbor.unwrap().is_live() {
-            number_of_live_neighbors += 1;
+        if let Some(neighbor) = self.right_bottom_neighbor(cell_position) {
+            neighbors.push(neighbor);
         }
 
-        number_of_live_neighbors
+        neighbors
     }
 
     fn left_top_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {

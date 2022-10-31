@@ -24,6 +24,10 @@ impl Cell {
     pub fn is_live(&self) -> bool {
         self.live
     }
+
+    pub fn is_dead(&self) -> bool {
+        !self.is_live()
+    }
 }
 
 #[cfg(test)]
@@ -41,6 +45,6 @@ mod tests {
     fn a_cell_could_be_dead() {
         let cell = Cell::dead();
 
-        assert!(!cell.is_live());
+        assert!(cell.is_dead());
     }
 }

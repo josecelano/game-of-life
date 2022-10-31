@@ -33,5 +33,6 @@ cargo test
 
 ## TODO
 
-- Refactor `Grid`. Extract function `Grid::get_cell_neighbors(cell_position: &CellPosition)` and use it in `Grid::live_neighbors_for`,
+- Change the strategy to "Strategy: every cell outside the array is dead".
 - Integration test to run the main example, so that I do not have to run it manually.
+- Refactor: introduce an `enum` for neighbor positions (left_top, top, right_top, etcetera).
