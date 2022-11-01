@@ -34,3 +34,4 @@ cargo test
 ## TODO
 
 - Change the strategy to "Strategy: every cell outside the array is dead".
+- Allow merging grid. The idea is to put a pattern (a grid) inside another grid.
