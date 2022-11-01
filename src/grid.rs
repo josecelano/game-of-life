@@ -1,5 +1,6 @@
 use crate::{cell::Cell, cell_position::CellPosition, cell_row::CellRow};
 
+#[derive(PartialEq, Debug, Clone)]
 pub struct Grid {
     pub cell_rows: Vec<CellRow>,
 }
@@ -48,6 +49,16 @@ impl Grid {
         Self { cell_rows }
     }
 
+    pub fn new_empty() -> Self {
+        Self { cell_rows: vec![] }
+    }
+
+    pub fn of_dead_cells(rows: usize, columns: usize) -> Self {
+        Self {
+            cell_rows: vec![CellRow::of_dead_cells(columns); rows],
+        }
+    }
+
     pub fn rows(&self) -> usize {
         self.cell_rows.len()
     }
@@ -91,6 +102,14 @@ impl Grid {
         let out_of_grid_neighbors = 8 - neighbors.len();
 
         live_neighbors + out_of_grid_neighbors
+    }
+
+    pub fn has_same_dimensions(&self, other: &Self) -> bool {
+        self.rows() == other.rows() && self.columns() == other.columns()
+    }
+
+    pub fn position_is_valid(&self, cell_position: &CellPosition) -> bool {
+        cell_position.row < self.rows() && cell_position.column < self.columns()
     }
 
     fn get_neighbors(&self, cell_position: &CellPosition) -> Vec<&Cell> {
@@ -283,7 +302,7 @@ mod tests {
 
     #[test]
     fn an_empty_grid_contains_no_cell_rows_or_columns() {
-        let grid = Grid::new(vec![]);
+        let grid = Grid::new_empty();
 
         assert_eq!(grid.rows(), 0);
         assert_eq!(grid.columns(), 0);
@@ -403,5 +422,30 @@ mod tests {
             grid.number_of_live_neighbors_for(CellPosition::new(2, 2)),
             8
         );
+    }
+
+    #[test]
+    fn there_is_a_short_way_to_build_a_grid_of_only_dead_cells() {
+        assert_eq!(
+            Grid::of_dead_cells(1, 1),
+            Grid::new(vec![CellRow::of_dead_cells(1)])
+        );
+    }
+
+    #[test]
+    fn two_grids_have_the_same_dimensions_if_they_have_the_same_amount_of_rows_and_columns() {
+        assert!(Grid::of_dead_cells(1, 1).has_same_dimensions(&Grid::of_dead_cells(1, 1)));
+        assert!(!Grid::of_dead_cells(1, 1).has_same_dimensions(&Grid::of_dead_cells(1, 2)));
+    }
+
+    #[test]
+    fn it_can_validate_a_cell_position() {
+        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(0, 0)));
+        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(0, 9)));
+        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(9, 0)));
+        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(9, 9)));
+
+        assert!(!Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(10, 0)));
+        assert!(!Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(0, 10)));
     }
 }

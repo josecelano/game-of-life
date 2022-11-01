@@ -35,3 +35,9 @@ cargo test
 
 - Change the strategy to "Strategy: every cell outside the array is dead".
 - Allow merging grid. The idea is to put a pattern (a grid) inside another grid.
+- Move `grid_printer` to `grid_functions`.
+- Refactor `get_cell` to return `Option<&Cell>` instead of panicking when the position is out of range?
+
+## Ideas
+
+- A new grid function `grid_expand` could be used to expand a pattern grid. It could be implemented internally with `grip_overlap`. It expands from the grid center.

@@ -5,3 +5,4 @@ pub mod game;
 pub mod grid;
 pub mod grid_printer;
 pub mod patters;
+pub mod grid_functions;
