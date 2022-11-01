@@ -35,4 +35,3 @@ cargo test
 
 - Change the strategy to "Strategy: every cell outside the array is dead".
 - Refactor: introduce an `enum` for neighbor positions (left_top, top, right_top, etcetera).
-- Refactor rename `live_neighbors_for` to `live_neighbors_amount_for`.

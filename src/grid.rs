@@ -46,7 +46,7 @@ impl Grid {
         self.cell_rows[pos.row].get_cell(pos.column)
     }
 
-    pub fn live_neighbors_for(&self, cell_position: CellPosition) -> usize {
+    pub fn number_of_live_neighbors_for(&self, cell_position: CellPosition) -> usize {
         if self.number_of_cells() == 1 {
             return 0;
         }
@@ -327,7 +327,7 @@ mod tests {
     fn a_cell_in_a_1x1_grid_does_not_have_any_live_neighbors() {
         let grid = Grid::new(vec![CellRow::new(vec![Cell::live()])]);
 
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(0, 0)), 0);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(0, 0)), 0);
     }
 
     #[test]
@@ -338,7 +338,7 @@ mod tests {
             CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
         ]);
 
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(1, 1)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(1, 1)), 8);
     }
 
     fn all_live_3x3_grid() -> Grid {
@@ -353,14 +353,14 @@ mod tests {
     fn given_a_cell_without_neighbors_we_consider_them_live_neighbors() {
         let grid = all_live_3x3_grid();
 
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(0, 0)), 8);
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(0, 1)), 8);
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(0, 2)), 8);
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(1, 0)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(0, 0)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(0, 1)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(0, 2)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(1, 0)), 8);
         // Cell (1,1) has all the neighbors
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(1, 2)), 8);
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(2, 0)), 8);
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(2, 1)), 8);
-        assert_eq!(grid.live_neighbors_for(CellPosition::new(2, 2)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(1, 2)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(2, 0)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(2, 1)), 8);
+        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(2, 2)), 8);
     }
 }
