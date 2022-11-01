@@ -4,6 +4,31 @@ pub struct Grid {
     pub cell_rows: Vec<CellRow>,
 }
 
+#[derive(Clone, Copy)]
+enum NeighborPosition {
+    LeftTop,
+    Top,
+    RightTop,
+    Left,
+    Right,
+    LeftBottom,
+    Bottom,
+    RightBottom,
+}
+
+fn neighbor_positions() -> Vec<NeighborPosition> {
+    vec![
+        NeighborPosition::LeftTop,
+        NeighborPosition::Top,
+        NeighborPosition::RightTop,
+        NeighborPosition::Left,
+        NeighborPosition::Right,
+        NeighborPosition::LeftBottom,
+        NeighborPosition::Bottom,
+        NeighborPosition::RightBottom,
+    ]
+}
+
 impl Default for Grid {
     fn default() -> Self {
         Self::new(vec![])
@@ -69,41 +94,27 @@ impl Grid {
     }
 
     fn get_neighbors(&self, cell_position: &CellPosition) -> Vec<&Cell> {
-        let mut neighbors = vec![];
+        neighbor_positions()
+            .iter()
+            .filter_map(|neighbor| self.get_neighbor(cell_position, *neighbor))
+            .collect()
+    }
 
-        if let Some(neighbor) = self.left_top_neighbor(cell_position) {
-            neighbors.push(neighbor);
+    fn get_neighbor(
+        &self,
+        cell_position: &CellPosition,
+        position: NeighborPosition,
+    ) -> Option<&Cell> {
+        match position {
+            NeighborPosition::LeftTop => self.left_top_neighbor(cell_position),
+            NeighborPosition::Top => self.top_neighbor(cell_position),
+            NeighborPosition::RightTop => self.right_top_neighbor(cell_position),
+            NeighborPosition::Left => self.left_neighbor(cell_position),
+            NeighborPosition::Right => self.right_neighbor(cell_position),
+            NeighborPosition::LeftBottom => self.left_bottom_neighbor(cell_position),
+            NeighborPosition::Bottom => self.bottom_neighbor(cell_position),
+            NeighborPosition::RightBottom => self.right_bottom_neighbor(cell_position),
         }
-
-        if let Some(neighbor) = self.top_neighbor(cell_position) {
-            neighbors.push(neighbor);
-        }
-
-        if let Some(neighbor) = self.right_top_neighbor(cell_position) {
-            neighbors.push(neighbor);
-        }
-
-        if let Some(neighbor) = self.left_neighbor(cell_position) {
-            neighbors.push(neighbor);
-        }
-
-        if let Some(neighbor) = self.right_neighbor(cell_position) {
-            neighbors.push(neighbor);
-        }
-
-        if let Some(neighbor) = self.left_bottom_neighbor(cell_position) {
-            neighbors.push(neighbor);
-        }
-
-        if let Some(neighbor) = self.bottom_neighbor(cell_position) {
-            neighbors.push(neighbor);
-        }
-
-        if let Some(neighbor) = self.right_bottom_neighbor(cell_position) {
-            neighbors.push(neighbor);
-        }
-
-        neighbors
     }
 
     fn left_top_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
@@ -327,7 +338,10 @@ mod tests {
     fn a_cell_in_a_1x1_grid_does_not_have_any_live_neighbors() {
         let grid = Grid::new(vec![CellRow::new(vec![Cell::live()])]);
 
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(0, 0)), 0);
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(0, 0)),
+            0
+        );
     }
 
     #[test]
@@ -338,7 +352,10 @@ mod tests {
             CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
         ]);
 
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(1, 1)), 8);
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(1, 1)),
+            8
+        );
     }
 
     fn all_live_3x3_grid() -> Grid {
@@ -353,14 +370,38 @@ mod tests {
     fn given_a_cell_without_neighbors_we_consider_them_live_neighbors() {
         let grid = all_live_3x3_grid();
 
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(0, 0)), 8);
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(0, 1)), 8);
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(0, 2)), 8);
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(1, 0)), 8);
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(0, 0)),
+            8
+        );
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(0, 1)),
+            8
+        );
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(0, 2)),
+            8
+        );
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(1, 0)),
+            8
+        );
         // Cell (1,1) has all the neighbors
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(1, 2)), 8);
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(2, 0)), 8);
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(2, 1)), 8);
-        assert_eq!(grid.number_of_live_neighbors_for(CellPosition::new(2, 2)), 8);
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(1, 2)),
+            8
+        );
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(2, 0)),
+            8
+        );
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(2, 1)),
+            8
+        );
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellPosition::new(2, 2)),
+            8
+        );
     }
 }
