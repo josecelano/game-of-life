@@ -59,6 +59,12 @@ impl Grid {
         }
     }
 
+    pub fn of_live_cells(rows: usize, columns: usize) -> Self {
+        Self {
+            cell_rows: vec![CellRow::of_live_cells(columns); rows],
+        }
+    }
+
     pub fn rows(&self) -> usize {
         self.cell_rows.len()
     }
@@ -429,6 +435,14 @@ mod tests {
         assert_eq!(
             Grid::of_dead_cells(1, 1),
             Grid::new(vec![CellRow::of_dead_cells(1)])
+        );
+    }
+
+    #[test]
+    fn there_is_a_short_way_to_build_a_grid_of_only_live_cells() {
+        assert_eq!(
+            Grid::of_live_cells(1, 1),
+            Grid::new(vec![CellRow::of_live_cells(1)])
         );
     }
 

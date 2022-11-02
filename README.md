@@ -37,6 +37,7 @@ cargo test
 - Allow merging grid. The idea is to put a pattern (a grid) inside another grid.
 - Move `grid_printer` to `grid_functions`.
 - Refactor `get_cell` to return `Option<&Cell>` instead of panicking when the position is out of range?
+- Add a new `Grid` constructor from `String` with the same text of the render output. It could be the trait to convert from and into String.
 
 ## Ideas
 

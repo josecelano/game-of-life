@@ -16,6 +16,12 @@ impl CellRow {
         }
     }
 
+    pub fn of_live_cells(length: usize) -> Self {
+        Self {
+            cells: vec![Cell::live(); length],
+        }
+    }
+
     pub fn len(&self) -> usize {
         self.cells.len()
     }
@@ -56,6 +62,11 @@ mod tests {
     #[test]
     fn there_is_a_short_way_to_build_a_cell_row_of_only_dead_cells() {
         assert_eq!(CellRow::of_dead_cells(1), CellRow::new(vec![Cell::dead()]));
+    }
+
+    #[test]
+    fn there_is_a_short_way_to_build_a_cell_row_of_only_live_cells() {
+        assert_eq!(CellRow::of_live_cells(1), CellRow::new(vec![Cell::live()]));
     }
 
     #[test]
