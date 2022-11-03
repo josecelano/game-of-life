@@ -33,7 +33,11 @@ use crate::{cell::Cell, cell_position::CellPosition, cell_row::CellRow, grid::Gr
 /// 2⬛⬛⬜⬜⬜
 /// 3⬛⬛⬜⬜⬜
 /// 4⬛⬛⬜⬜⬜
-pub fn grid_overlap(back_grid: &Grid, front_grid: &Grid, position: &CellPosition) -> Grid {
+pub fn grid_overlap(
+    back_grid: &Grid,
+    front_grid: &Grid,
+    front_grid_position: &CellPosition,
+) -> Grid {
     if back_grid.is_empty() {
         return Grid::new_empty();
     }
@@ -42,44 +46,106 @@ pub fn grid_overlap(back_grid: &Grid, front_grid: &Grid, position: &CellPosition
         return back_grid.clone();
     }
 
-    if !back_grid.position_is_valid(position) {
+    if !back_grid.position_is_valid(front_grid_position) {
         // TODO: we have other options:
         // - Try to overlap part of the front grid is possible.
         // - Return None (Option<Grid>)
         panic!("Position out of back grid dimensions");
     }
 
-    if back_grid.has_same_dimensions(front_grid) && position.is_left_top_corner() {
+    if back_grid.has_same_dimensions(front_grid) && front_grid_position.is_left_top_corner() {
         return front_grid.clone();
     }
 
+    Grid::new(calculate_new_rows(
+        back_grid,
+        front_grid,
+        front_grid_position,
+    ))
+}
+
+fn calculate_new_rows(
+    back_grid: &Grid,
+    front_grid: &Grid,
+    front_grid_position: &CellPosition,
+) -> Vec<CellRow> {
     let mut cell_rows = vec![];
 
     for row in 0..back_grid.rows() {
-        let mut cells = vec![];
-        for column in 0..back_grid.columns() {
-            let back_grid_cell_pos = CellPosition::new(row, column);
-
-            // If we are in a cell overlapped by the front grid
-            if row >= position.row
-                && column >= position.column
-                && row < (position.row + front_grid.rows())
-                && column < position.column + front_grid.columns()
-            {
-                // Calculate the cell position relative to the front grid
-                let front_grid_row = row - position.row;
-                let front_grid_column = column - position.column;
-                let front_grid_cell_pos = CellPosition::new(front_grid_row, front_grid_column);
-
-                cells.push(front_grid.get_cell(front_grid_cell_pos).clone());
-            } else {
-                cells.push(back_grid.get_cell(back_grid_cell_pos).clone());
-            }
-        }
-        cell_rows.push(CellRow::new(cells))
+        cell_rows.push(calculate_new_row(
+            row,
+            back_grid,
+            front_grid,
+            front_grid_position,
+        ))
     }
 
-    Grid::new(cell_rows)
+    cell_rows
+}
+
+fn calculate_new_row(
+    row: usize,
+    back_grid: &Grid,
+    front_grid: &Grid,
+    front_grid_position: &CellPosition,
+) -> CellRow {
+    let mut cells = vec![];
+    for column in 0..back_grid.columns() {
+        cells.push(calculate_new_cell(
+            CellPosition::new(row, column),
+            back_grid,
+            front_grid,
+            front_grid_position,
+        ));
+    }
+    CellRow::with(cells)
+}
+
+fn calculate_new_cell(
+    cell_position: CellPosition,
+    back_grid: &Grid,
+    front_grid: &Grid,
+    front_grid_position: &CellPosition,
+) -> Cell {
+    match overlapped_cell(&cell_position, front_grid, front_grid_position) {
+        None => back_grid.get_cell(cell_position).clone(),
+        Some(front_cell_pos) => front_grid.get_cell(front_cell_pos).clone(),
+    }
+}
+
+fn overlapped_cell(
+    cell_position: &CellPosition,
+    front_grid: &Grid,
+    front_grid_position: &CellPosition,
+) -> Option<CellPosition> {
+    if !is_overlapped_cell(cell_position, front_grid, front_grid_position) {
+        return None;
+    }
+
+    Some(relative_front_grid_cell_position(
+        cell_position,
+        front_grid_position,
+    ))
+}
+
+fn is_overlapped_cell(
+    cell_position: &CellPosition,
+    front_grid: &Grid,
+    front_grid_position: &CellPosition,
+) -> bool {
+    cell_position.row >= front_grid_position.row
+        && cell_position.column >= front_grid_position.column
+        && cell_position.row < (front_grid_position.row + front_grid.rows())
+        && cell_position.column < front_grid_position.column + front_grid.columns()
+}
+
+fn relative_front_grid_cell_position(
+    cell_position: &CellPosition,
+    front_grid_position: &CellPosition,
+) -> CellPosition {
+    let front_grid_row = cell_position.row - front_grid_position.row;
+    let front_grid_column = cell_position.column - front_grid_position.column;
+    CellPosition::new(front_grid_row, front_grid_column)
 }
 
 #[cfg(test)]

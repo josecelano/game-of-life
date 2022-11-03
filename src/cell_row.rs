@@ -10,6 +10,11 @@ impl CellRow {
         Self { cells }
     }
 
+    /// It's just an alias for readability
+    pub fn with(cells: Vec<Cell>) -> Self {
+        Self::new(cells)
+    }
+
     pub fn of_dead_cells(length: usize) -> Self {
         Self {
             cells: vec![Cell::dead(); length],
