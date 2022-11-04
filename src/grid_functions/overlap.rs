@@ -1,4 +1,4 @@
-use crate::{cell::Cell, cell_position::CellPosition, cell_row::CellRow, grid::Grid};
+use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid};
 
 /// It overlaps a grid on top of another grid at a given cell position,
 /// returning a new grid. It uses the left top corner of the front grid
@@ -36,7 +36,7 @@ use crate::{cell::Cell, cell_position::CellPosition, cell_row::CellRow, grid::Gr
 pub fn grid_overlap(
     back_grid: &Grid,
     front_grid: &Grid,
-    front_grid_position: &CellPosition,
+    front_grid_position: &CellCoordinates,
 ) -> Grid {
     if back_grid.is_empty() {
         return Grid::new_empty();
@@ -67,7 +67,7 @@ pub fn grid_overlap(
 fn calculate_new_rows(
     back_grid: &Grid,
     front_grid: &Grid,
-    front_grid_position: &CellPosition,
+    front_grid_position: &CellCoordinates,
 ) -> Vec<CellRow> {
     let mut cell_rows = vec![];
 
@@ -87,12 +87,12 @@ fn calculate_new_row(
     row: usize,
     back_grid: &Grid,
     front_grid: &Grid,
-    front_grid_position: &CellPosition,
+    front_grid_position: &CellCoordinates,
 ) -> CellRow {
     let mut cells = vec![];
     for column in 0..back_grid.columns() {
         cells.push(calculate_new_cell(
-            CellPosition::new(row, column),
+            CellCoordinates::new(row, column),
             back_grid,
             front_grid,
             front_grid_position,
@@ -102,55 +102,57 @@ fn calculate_new_row(
 }
 
 fn calculate_new_cell(
-    cell_position: CellPosition,
+    cell_coordinates: CellCoordinates,
     back_grid: &Grid,
     front_grid: &Grid,
-    front_grid_position: &CellPosition,
+    front_grid_position: &CellCoordinates,
 ) -> Cell {
-    match overlapped_cell(&cell_position, front_grid, front_grid_position) {
-        None => back_grid.get_cell(cell_position).clone(),
+    match overlapped_cell(&cell_coordinates, front_grid, front_grid_position) {
+        None => back_grid.get_cell(cell_coordinates).clone(),
         Some(front_cell_pos) => front_grid.get_cell(front_cell_pos).clone(),
     }
 }
 
 fn overlapped_cell(
-    cell_position: &CellPosition,
+    cell_coordinates: &CellCoordinates,
     front_grid: &Grid,
-    front_grid_position: &CellPosition,
-) -> Option<CellPosition> {
-    if !is_overlapped_cell(cell_position, front_grid, front_grid_position) {
+    front_grid_position: &CellCoordinates,
+) -> Option<CellCoordinates> {
+    if !is_overlapped_cell(cell_coordinates, front_grid, front_grid_position) {
         return None;
     }
 
-    Some(relative_front_grid_cell_position(
-        cell_position,
+    Some(relative_front_grid_cell_coordinates(
+        cell_coordinates,
         front_grid_position,
     ))
 }
 
 fn is_overlapped_cell(
-    cell_position: &CellPosition,
+    cell_coordinates: &CellCoordinates,
     front_grid: &Grid,
-    front_grid_position: &CellPosition,
+    front_grid_position: &CellCoordinates,
 ) -> bool {
-    cell_position.row >= front_grid_position.row
-        && cell_position.column >= front_grid_position.column
-        && cell_position.row < (front_grid_position.row + front_grid.rows())
-        && cell_position.column < front_grid_position.column + front_grid.columns()
+    cell_coordinates.row >= front_grid_position.row
+        && cell_coordinates.column >= front_grid_position.column
+        && cell_coordinates.row < (front_grid_position.row + front_grid.rows())
+        && cell_coordinates.column < front_grid_position.column + front_grid.columns()
 }
 
-fn relative_front_grid_cell_position(
-    cell_position: &CellPosition,
-    front_grid_position: &CellPosition,
-) -> CellPosition {
-    let front_grid_row = cell_position.row - front_grid_position.row;
-    let front_grid_column = cell_position.column - front_grid_position.column;
-    CellPosition::new(front_grid_row, front_grid_column)
+fn relative_front_grid_cell_coordinates(
+    cell_coordinates: &CellCoordinates,
+    front_grid_position: &CellCoordinates,
+) -> CellCoordinates {
+    let front_grid_row = cell_coordinates.row - front_grid_position.row;
+    let front_grid_column = cell_coordinates.column - front_grid_position.column;
+    CellCoordinates::new(front_grid_row, front_grid_column)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{cell_position::CellPosition, grid::Grid, grid_functions::overlap::grid_overlap};
+    use crate::{
+        cell_coordinates::CellCoordinates, grid::Grid, grid_functions::overlap::grid_overlap,
+    };
 
     #[test]
     #[should_panic]
@@ -159,20 +161,20 @@ mod tests {
         let front_grid = Grid::of_live_cells(5, 5);
 
         // Row out of range
-        grid_overlap(&back_grid, &front_grid, &CellPosition::new(6, 2));
+        grid_overlap(&back_grid, &front_grid, &CellCoordinates::new(6, 2));
 
         // Column out of range
-        grid_overlap(&back_grid, &front_grid, &CellPosition::new(5, 6));
+        grid_overlap(&back_grid, &front_grid, &CellCoordinates::new(5, 6));
     }
 
     mod overlapping_on_the_left_top_corner {
         use crate::{
-            cell::Cell, cell_position::CellPosition, cell_row::CellRow, grid::Grid,
+            cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid,
             grid_functions::overlap::grid_overlap,
         };
 
-        fn left_top_corner() -> CellPosition {
-            CellPosition::new(0, 0)
+        fn left_top_corner() -> CellCoordinates {
+            CellCoordinates::new(0, 0)
         }
 
         #[test]
@@ -233,7 +235,7 @@ mod tests {
 
     mod overlapping_not_on_the_left_top_corner {
         use crate::{
-            cell::c, cell_position::CellPosition, cell_row::CellRow, grid::Grid,
+            cell::c, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid,
             grid_functions::overlap::grid_overlap,
         };
 
@@ -243,7 +245,7 @@ mod tests {
             let front_grid = Grid::of_live_cells(5, 5);
 
             assert_eq!(
-                grid_overlap(&back_grid, &front_grid, &CellPosition::new(2, 2)),
+                grid_overlap(&back_grid, &front_grid, &CellCoordinates::new(2, 2)),
                 Grid::new(vec![
                     //                   0        1        2        3         4
                     CellRow::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛'),]), // 0

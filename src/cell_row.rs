@@ -75,7 +75,7 @@ mod tests {
     }
 
     #[test]
-    fn it_can_validate_a_cell_position() {
+    fn it_can_validate_if_the_row_contains_a_given_position_starting_at_zero() {
         assert!(CellRow::of_dead_cells(10).position_is_valid(0));
         assert!(CellRow::of_dead_cells(10).position_is_valid(9));
 

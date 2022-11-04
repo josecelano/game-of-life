@@ -1,4 +1,4 @@
-use crate::{cell::Cell, cell_position::CellPosition, cell_row::CellRow};
+use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow};
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Grid {
@@ -84,16 +84,16 @@ impl Grid {
         self.number_of_cells() == 0
     }
 
-    pub fn get_cell(&self, pos: CellPosition) -> &Cell {
+    pub fn get_cell(&self, pos: CellCoordinates) -> &Cell {
         self.cell_rows[pos.row].get_cell(pos.column)
     }
 
-    pub fn number_of_live_neighbors_for(&self, cell_position: CellPosition) -> usize {
+    pub fn number_of_live_neighbors_for(&self, cell_coordinates: CellCoordinates) -> usize {
         if self.number_of_cells() == 1 {
             return 0;
         }
 
-        let neighbors = self.get_neighbors(&cell_position);
+        let neighbors = self.get_neighbors(&cell_coordinates);
 
         let live_neighbors =
             neighbors
@@ -114,190 +114,190 @@ impl Grid {
         self.rows() == other.rows() && self.columns() == other.columns()
     }
 
-    pub fn position_is_valid(&self, cell_position: &CellPosition) -> bool {
-        cell_position.row < self.rows() && cell_position.column < self.columns()
+    pub fn position_is_valid(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.row < self.rows() && cell_coordinates.column < self.columns()
     }
 
-    fn get_neighbors(&self, cell_position: &CellPosition) -> Vec<&Cell> {
+    fn get_neighbors(&self, cell_coordinates: &CellCoordinates) -> Vec<&Cell> {
         neighbor_positions()
             .iter()
-            .filter_map(|neighbor| self.get_neighbor(cell_position, *neighbor))
+            .filter_map(|neighbor| self.get_neighbor(cell_coordinates, *neighbor))
             .collect()
     }
 
     fn get_neighbor(
         &self,
-        cell_position: &CellPosition,
+        cell_coordinates: &CellCoordinates,
         position: NeighborPosition,
     ) -> Option<&Cell> {
         match position {
-            NeighborPosition::LeftTop => self.left_top_neighbor(cell_position),
-            NeighborPosition::Top => self.top_neighbor(cell_position),
-            NeighborPosition::RightTop => self.right_top_neighbor(cell_position),
-            NeighborPosition::Left => self.left_neighbor(cell_position),
-            NeighborPosition::Right => self.right_neighbor(cell_position),
-            NeighborPosition::LeftBottom => self.left_bottom_neighbor(cell_position),
-            NeighborPosition::Bottom => self.bottom_neighbor(cell_position),
-            NeighborPosition::RightBottom => self.right_bottom_neighbor(cell_position),
+            NeighborPosition::LeftTop => self.left_top_neighbor(cell_coordinates),
+            NeighborPosition::Top => self.top_neighbor(cell_coordinates),
+            NeighborPosition::RightTop => self.right_top_neighbor(cell_coordinates),
+            NeighborPosition::Left => self.left_neighbor(cell_coordinates),
+            NeighborPosition::Right => self.right_neighbor(cell_coordinates),
+            NeighborPosition::LeftBottom => self.left_bottom_neighbor(cell_coordinates),
+            NeighborPosition::Bottom => self.bottom_neighbor(cell_coordinates),
+            NeighborPosition::RightBottom => self.right_bottom_neighbor(cell_coordinates),
         }
     }
 
-    fn left_top_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
-        if !self.has_left_top_neighbor(cell_position) {
+    fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
+        if !self.has_left_top_neighbor(cell_coordinates) {
             return None;
         }
 
-        Some(self.get_cell(CellPosition::new(
-            cell_position.row - 1,
-            cell_position.column - 1,
+        Some(self.get_cell(CellCoordinates::new(
+            cell_coordinates.row - 1,
+            cell_coordinates.column - 1,
         )))
     }
 
-    fn has_left_top_neighbor(&self, cell_position: &CellPosition) -> bool {
-        !self.is_left_top_corner(cell_position)
+    fn has_left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
+        !self.is_left_top_corner(cell_coordinates)
     }
 
-    fn is_left_top_corner(&self, cell_position: &CellPosition) -> bool {
-        cell_position.row == 0 || cell_position.column == 0
+    fn is_left_top_corner(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.row == 0 || cell_coordinates.column == 0
     }
 
-    fn top_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
-        if !self.has_top_neighbor(cell_position) {
+    fn top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
+        if !self.has_top_neighbor(cell_coordinates) {
             return None;
         }
 
-        Some(self.get_cell(CellPosition::new(
-            cell_position.row - 1,
-            cell_position.column,
+        Some(self.get_cell(CellCoordinates::new(
+            cell_coordinates.row - 1,
+            cell_coordinates.column,
         )))
     }
 
-    fn has_top_neighbor(&self, cell_position: &CellPosition) -> bool {
-        !self.is_top_row(cell_position)
+    fn has_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
+        !self.is_top_row(cell_coordinates)
     }
 
-    fn is_top_row(&self, cell_position: &CellPosition) -> bool {
-        cell_position.row == 0
+    fn is_top_row(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.row == 0
     }
 
-    fn right_top_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
-        if !self.has_right_top_neighbor(cell_position) {
+    fn right_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
+        if !self.has_right_top_neighbor(cell_coordinates) {
             return None;
         }
 
-        Some(self.get_cell(CellPosition::new(
-            cell_position.row - 1,
-            cell_position.column + 1,
+        Some(self.get_cell(CellCoordinates::new(
+            cell_coordinates.row - 1,
+            cell_coordinates.column + 1,
         )))
     }
 
-    fn has_right_top_neighbor(&self, cell_position: &CellPosition) -> bool {
-        !self.is_right_top_corner(cell_position)
+    fn has_right_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
+        !self.is_right_top_corner(cell_coordinates)
     }
 
-    fn is_right_top_corner(&self, cell_position: &CellPosition) -> bool {
-        cell_position.row == 0 || cell_position.column == self.columns() - 1
+    fn is_right_top_corner(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.row == 0 || cell_coordinates.column == self.columns() - 1
     }
 
-    fn left_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
-        if !self.has_left_neighbor(cell_position) {
+    fn left_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
+        if !self.has_left_neighbor(cell_coordinates) {
             return None;
         }
 
-        Some(self.get_cell(CellPosition::new(
-            cell_position.row,
-            cell_position.column - 1,
+        Some(self.get_cell(CellCoordinates::new(
+            cell_coordinates.row,
+            cell_coordinates.column - 1,
         )))
     }
 
-    fn has_left_neighbor(&self, cell_position: &CellPosition) -> bool {
-        !self.is_left_column(cell_position)
+    fn has_left_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
+        !self.is_left_column(cell_coordinates)
     }
 
-    fn is_left_column(&self, cell_position: &CellPosition) -> bool {
-        cell_position.column == 0
+    fn is_left_column(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.column == 0
     }
 
-    fn right_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
-        if !self.has_right_neighbor(cell_position) {
+    fn right_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
+        if !self.has_right_neighbor(cell_coordinates) {
             return None;
         }
 
-        Some(self.get_cell(CellPosition::new(
-            cell_position.row,
-            cell_position.column + 1,
+        Some(self.get_cell(CellCoordinates::new(
+            cell_coordinates.row,
+            cell_coordinates.column + 1,
         )))
     }
 
-    fn has_right_neighbor(&self, cell_position: &CellPosition) -> bool {
-        !self.is_right_column(cell_position)
+    fn has_right_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
+        !self.is_right_column(cell_coordinates)
     }
 
-    fn is_right_column(&self, cell_position: &CellPosition) -> bool {
-        cell_position.column == self.columns() - 1
+    fn is_right_column(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.column == self.columns() - 1
     }
 
-    fn left_bottom_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
-        if !self.has_left_bottom_neighbor(cell_position) {
+    fn left_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
+        if !self.has_left_bottom_neighbor(cell_coordinates) {
             return None;
         }
 
-        Some(self.get_cell(CellPosition::new(
-            cell_position.row + 1,
-            cell_position.column,
+        Some(self.get_cell(CellCoordinates::new(
+            cell_coordinates.row + 1,
+            cell_coordinates.column,
         )))
     }
 
-    fn has_left_bottom_neighbor(&self, cell_position: &CellPosition) -> bool {
-        !self.is_left_bottom_corner(cell_position)
+    fn has_left_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
+        !self.is_left_bottom_corner(cell_coordinates)
     }
 
-    fn is_left_bottom_corner(&self, cell_position: &CellPosition) -> bool {
-        cell_position.row == self.rows() - 1 || cell_position.column == 0
+    fn is_left_bottom_corner(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.row == self.rows() - 1 || cell_coordinates.column == 0
     }
 
-    fn bottom_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
-        if !self.has_bottom_neighbor(cell_position) {
+    fn bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
+        if !self.has_bottom_neighbor(cell_coordinates) {
             return None;
         }
 
-        Some(self.get_cell(CellPosition::new(
-            cell_position.row + 1,
-            cell_position.column,
+        Some(self.get_cell(CellCoordinates::new(
+            cell_coordinates.row + 1,
+            cell_coordinates.column,
         )))
     }
 
-    fn has_bottom_neighbor(&self, cell_position: &CellPosition) -> bool {
-        !self.is_bottom_row(cell_position)
+    fn has_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
+        !self.is_bottom_row(cell_coordinates)
     }
 
-    fn is_bottom_row(&self, cell_position: &CellPosition) -> bool {
-        cell_position.row == self.rows() - 1
+    fn is_bottom_row(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.row == self.rows() - 1
     }
 
-    fn right_bottom_neighbor(&self, cell_position: &CellPosition) -> Option<&Cell> {
-        if !self.has_right_bottom_neighbor(cell_position) {
+    fn right_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
+        if !self.has_right_bottom_neighbor(cell_coordinates) {
             return None;
         }
 
-        Some(self.get_cell(CellPosition::new(
-            cell_position.row + 1,
-            cell_position.column + 1,
+        Some(self.get_cell(CellCoordinates::new(
+            cell_coordinates.row + 1,
+            cell_coordinates.column + 1,
         )))
     }
 
-    fn has_right_bottom_neighbor(&self, cell_position: &CellPosition) -> bool {
-        !self.is_right_bottom_corner(cell_position)
+    fn has_right_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
+        !self.is_right_bottom_corner(cell_coordinates)
     }
 
-    fn is_right_bottom_corner(&self, cell_position: &CellPosition) -> bool {
-        cell_position.row == self.rows() - 1 || cell_position.column == self.columns() - 1
+    fn is_right_bottom_corner(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.row == self.rows() - 1 || cell_coordinates.column == self.columns() - 1
     }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{cell::Cell, cell_position::CellPosition, cell_row::CellRow, grid::Grid};
+    use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid};
 
     #[test]
     fn the_default_grid_does_not_have_any_cell_row() {
@@ -364,7 +364,7 @@ mod tests {
         let grid = Grid::new(vec![CellRow::new(vec![Cell::live()])]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(0, 0)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(0, 0)),
             0
         );
     }
@@ -378,7 +378,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(1, 1)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
             8
         );
     }
@@ -396,36 +396,36 @@ mod tests {
         let grid = all_live_3x3_grid();
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(0, 0)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(0, 0)),
             8
         );
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(0, 1)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(0, 1)),
             8
         );
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(0, 2)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(0, 2)),
             8
         );
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(1, 0)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 0)),
             8
         );
         // Cell (1,1) has all the neighbors
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(1, 2)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 2)),
             8
         );
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(2, 0)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(2, 0)),
             8
         );
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(2, 1)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(2, 1)),
             8
         );
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellPosition::new(2, 2)),
+            grid.number_of_live_neighbors_for(CellCoordinates::new(2, 2)),
             8
         );
     }
@@ -453,13 +453,13 @@ mod tests {
     }
 
     #[test]
-    fn it_can_validate_a_cell_position() {
-        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(0, 0)));
-        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(0, 9)));
-        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(9, 0)));
-        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(9, 9)));
+    fn it_can_validate_is_the_grid_contains_a_cell_at_a_given_coordinates() {
+        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellCoordinates::new(0, 0)));
+        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellCoordinates::new(0, 9)));
+        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellCoordinates::new(9, 0)));
+        assert!(Grid::of_dead_cells(10, 10).position_is_valid(&CellCoordinates::new(9, 9)));
 
-        assert!(!Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(10, 0)));
-        assert!(!Grid::of_dead_cells(10, 10).position_is_valid(&CellPosition::new(0, 10)));
+        assert!(!Grid::of_dead_cells(10, 10).position_is_valid(&CellCoordinates::new(10, 0)));
+        assert!(!Grid::of_dead_cells(10, 10).position_is_valid(&CellCoordinates::new(0, 10)));
     }
 }

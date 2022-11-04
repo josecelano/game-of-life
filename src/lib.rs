@@ -1,5 +1,5 @@
 pub mod cell;
-pub mod cell_position;
+pub mod cell_coordinates;
 pub mod cell_row;
 pub mod game;
 pub mod grid;
