@@ -128,6 +128,8 @@ fn overlapped_cell(
     ))
 }
 
+/// Return true is at the current back grid cell coordinates
+/// there is also a cell in the front grid
 fn is_overlapped_cell(
     cell_coordinates: &CellCoordinates,
     front_grid: &Grid,
@@ -143,9 +145,7 @@ fn relative_front_grid_cell_coordinates(
     cell_coordinates: &CellCoordinates,
     front_grid_position: &CellCoordinates,
 ) -> CellCoordinates {
-    let front_grid_row = cell_coordinates.row - front_grid_position.row;
-    let front_grid_column = cell_coordinates.column - front_grid_position.column;
-    CellCoordinates::new(front_grid_row, front_grid_column)
+    cell_coordinates.recalculate_to_origin(front_grid_position)
 }
 
 #[cfg(test)]
