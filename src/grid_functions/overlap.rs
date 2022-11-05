@@ -46,7 +46,7 @@ pub fn grid_overlap(
         return back_grid.clone();
     }
 
-    if back_grid.has_same_dimensions(front_grid) && front_grid_position.is_left_top_corner() {
+    if perfect_overlapping(back_grid, front_grid, front_grid_position) {
         return front_grid.clone();
     }
 
@@ -66,6 +66,14 @@ pub fn grid_overlap(
         front_grid,
         front_grid_position,
     ))
+}
+
+fn perfect_overlapping(
+    back_grid: &Grid,
+    front_grid: &Grid,
+    front_grid_position: &CellCoordinates,
+) -> bool {
+    back_grid.has_same_dimensions(front_grid) && front_grid_position.is_left_top_corner()
 }
 
 /// Right bottom corner coordinates for the front grid using back grid coordinates origin
