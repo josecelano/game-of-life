@@ -7,32 +7,36 @@ use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, gr
 /// For example:
 ///
 /// Back Grid:   Front Grid:
+/// ```text
 ///  0 1 2 3 4     0 1 2
 /// 0⬛⬛⬛⬛⬛   ⬜⬜⬜
 /// 1⬛⬛⬛⬛⬛   ⬜⬜⬜
 /// 2⬛⬛⬛⬛⬛   ⬜⬜⬜
 /// 3⬛⬛⬛⬛⬛
 /// 4⬛⬛⬛⬛⬛
+/// ```
 ///
 /// Overlapped at position (0,0):
 ///
-/// Result:
+/// ```text
 ///   0 1 2 3 4
 /// 0⬜⬜⬜⬛⬛
 /// 1⬜⬜⬜⬛⬛
 /// 2⬜⬜⬜⬛⬛
 /// 3⬛⬛⬛⬛⬛
 /// 4⬛⬛⬛⬛⬛
+/// ```
 ///
 /// Overlapped at position (2,2):
 ///
-/// Result:
+/// ```text
 ///   0 1 2 3 4
 /// 0⬛⬛⬛⬛⬛
 /// 1⬛⬛⬛⬛⬛
 /// 2⬛⬛⬜⬜⬜
 /// 3⬛⬛⬜⬜⬜
 /// 4⬛⬛⬜⬜⬜
+/// ```
 pub fn grid_overlap(
     back_grid: &Grid,
     front_grid: &Grid,
