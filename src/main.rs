@@ -5,9 +5,6 @@ fn clear_screen() {
 }
 
 fn main() {
-    for iter in 1..100000 {
-        clear_screen();
-        print!("{}", play());
-        println!("Iter:{}", iter);
-    }
+    clear_screen();
+    print!("{}", play());
 }
