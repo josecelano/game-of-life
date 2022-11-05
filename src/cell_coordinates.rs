@@ -18,6 +18,10 @@ impl CellCoordinates {
         let front_grid_column = self.column - new_origin.column;
         CellCoordinates::new(front_grid_row, front_grid_column)
     }
+
+    pub fn translate(&self, rows: usize, columns: usize) -> Self {
+        Self::new(self.row + rows, self.column + columns)
+    }
 }
 
 #[cfg(test)]
@@ -68,6 +72,14 @@ mod tests {
 
         assert_eq!(
             cell_coordinates.recalculate_to_origin(&CellCoordinates::new(1, 1)),
+            CellCoordinates::new(1, 1)
+        );
+    }
+
+    #[test]
+    fn cell_coordinates_can_be_translate_some_rows_or_columns() {
+        assert_eq!(
+            CellCoordinates::new(0, 0).translate(1, 1),
             CellCoordinates::new(1, 1)
         );
     }

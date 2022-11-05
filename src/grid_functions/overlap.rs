@@ -46,15 +46,19 @@ pub fn grid_overlap(
         return back_grid.clone();
     }
 
+    if back_grid.has_same_dimensions(front_grid) && front_grid_position.is_left_top_corner() {
+        return front_grid.clone();
+    }
+
     if !back_grid.position_is_valid(front_grid_position) {
-        // TODO: we have other options:
-        // - Try to overlap part of the front grid is possible.
-        // - Return None (Option<Grid>)
         panic!("Position out of back grid dimensions");
     }
 
-    if back_grid.has_same_dimensions(front_grid) && front_grid_position.is_left_top_corner() {
-        return front_grid.clone();
+    if !back_grid.position_is_valid(&front_grid_right_bottom_corner_coordinates(
+        front_grid,
+        front_grid_position,
+    )) {
+        panic!("Front grid does not fit in back grid at the given position");
     }
 
     Grid::new(calculate_new_rows(
@@ -62,6 +66,14 @@ pub fn grid_overlap(
         front_grid,
         front_grid_position,
     ))
+}
+
+/// Right bottom corner coordinates for the front grid using back grid coordinates origin
+fn front_grid_right_bottom_corner_coordinates(
+    front_grid: &Grid,
+    front_grid_position: &CellCoordinates,
+) -> CellCoordinates {
+    front_grid_position.translate(front_grid.rows() - 1, front_grid.columns() - 1)
 }
 
 fn calculate_new_rows(
@@ -167,6 +179,28 @@ mod tests {
         grid_overlap(&back_grid, &front_grid, &CellCoordinates::new(5, 6));
     }
 
+    #[test]
+    #[should_panic]
+    fn it_should_fail_when_the_front_grid_does_not_fit_inside_the_back_grid_because_of_row_dimension(
+    ) {
+        let back_grid = Grid::of_dead_cells(2, 2);
+        let front_grid = Grid::of_dead_cells(2, 2);
+
+        // Second row of front grid does not fit
+        grid_overlap(&back_grid, &front_grid, &CellCoordinates::new(1, 0));
+    }
+
+    #[test]
+    #[should_panic]
+    fn it_should_fail_when_the_front_grid_does_not_fit_inside_the_back_grid_because_of_column_dimension(
+    ) {
+        let back_grid = Grid::of_dead_cells(2, 2);
+        let front_grid = Grid::of_dead_cells(2, 2);
+
+        // Second columns of the front gird does not fit
+        grid_overlap(&back_grid, &front_grid, &CellCoordinates::new(0, 1));
+    }
+
     mod overlapping_on_the_left_top_corner {
         use crate::{
             cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid,
@@ -240,9 +274,9 @@ mod tests {
         };
 
         #[test]
-        fn smaller_grid_into_a_bigger_one() {
+        fn smaller_front_grid_that_fits_into_the_back_grid() {
             let back_grid = Grid::of_dead_cells(5, 5);
-            let front_grid = Grid::of_live_cells(5, 5);
+            let front_grid = Grid::of_live_cells(3, 3);
 
             assert_eq!(
                 grid_overlap(&back_grid, &front_grid, &CellCoordinates::new(2, 2)),
