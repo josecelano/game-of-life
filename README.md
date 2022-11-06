@@ -42,3 +42,4 @@ cargo test
 ## Ideas
 
 - A new grid function `grid_expand` could be used to expand a pattern grid. It could be implemented internally with `grip_overlap`. It expands from the grid center.
+- Implement an iterator for the Grid that gives you a pair `(CellCoordinates, &Cell)`. To avoid double loop and make it more functional.
