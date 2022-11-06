@@ -244,7 +244,7 @@ impl Grid {
 
         Some(self.get_cell(CellCoordinates::new(
             cell_coordinates.row + 1,
-            cell_coordinates.column,
+            cell_coordinates.column - 1,
         )))
     }
 
@@ -297,7 +297,12 @@ impl Grid {
 
 #[cfg(test)]
 mod tests {
-    use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid};
+    use crate::{
+        cell::{c, Cell},
+        cell_coordinates::CellCoordinates,
+        cell_row::CellRow,
+        grid::Grid,
+    };
 
     #[test]
     fn the_default_grid_does_not_have_any_cell_row() {
@@ -426,6 +431,97 @@ mod tests {
         );
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(2, 2)),
+            8
+        );
+    }
+
+    #[test]
+    fn it_should_calculate_the_number_of_live_neighbors() {
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+        ]);
+
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            1
+        );
+
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+        ]);
+
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            2
+        );
+
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+        ]);
+
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            3
+        );
+
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+        ]);
+
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            4
+        );
+
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+        ]);
+
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            5
+        );
+
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+        ]);
+
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            6
+        );
+
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬛')]),
+        ]);
+
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            7
+        );
+
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+        ]);
+
+        assert_eq!(
+            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
             8
         );
     }
