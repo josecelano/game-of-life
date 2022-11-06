@@ -1,5 +1,9 @@
 # Game of Live
 
+A Conway's Game of Live kata in Rust.
+
+WIP: it only works with patterns inside, and the cells outside the grid are considered live, which produces the effect of creating a lot of new cells since the beginning.
+
 The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, live or dead (or populated and unpopulated, respectively). Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent.
 
 ## Rules
@@ -23,7 +27,13 @@ The initial pattern constitutes the seed of the system. The first generation is 
 
 Each generation is a pure function of the preceding one. The rules continue to be applied repeatedly to create further generations.
 
-## Test
+## Commands
+
+Run:
+
+```s
+cargo run
+```
 
 Run tests:
 
