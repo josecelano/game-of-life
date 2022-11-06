@@ -1,10 +1,9 @@
+use core::time::Duration;
 use game_of_life::game::play;
 
-fn clear_screen() {
-    print!("\x1B[2J\x1B[1;1H");
-}
-
 fn main() {
-    clear_screen();
-    print!("{}", play());
+    let generations = 10000;
+    let generation_duration = Duration::from_secs(2);
+
+    print!("{}", play(generations, generation_duration));
 }
