@@ -43,7 +43,6 @@ cargo test
 
 ## TODO
 
-- Change the strategy to "Strategy: every cell outside the array is dead".
 - Allow merging grid. The idea is to put a pattern (a grid) inside another grid.
 - Move `grid_printer` to `grid_functions`.
 - Refactor `get_cell` to return `Option<&Cell>` instead of panicking when the position is out of range?

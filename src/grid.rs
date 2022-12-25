@@ -103,11 +103,7 @@ impl Grid {
                     false => counter,
                 });
 
-        // Strategy: every cell outside the array is live
-
-        let out_of_grid_neighbors = 8 - neighbors.len();
-
-        live_neighbors + out_of_grid_neighbors
+        live_neighbors
     }
 
     pub fn has_same_dimensions(&self, other: &Self) -> bool {
@@ -397,41 +393,41 @@ mod tests {
     }
 
     #[test]
-    fn given_a_cell_without_neighbors_we_consider_them_live_neighbors() {
+    fn given_a_cell_without_neighbors_we_consider_them_dead_neighbors() {
         let grid = all_live_3x3_grid();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(0, 0)),
-            8
+            3
         );
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(0, 1)),
-            8
+            5
         );
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(0, 2)),
-            8
+            3
         );
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(1, 0)),
-            8
+            5
         );
         // Cell (1,1) has all the neighbors
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(1, 2)),
-            8
+            5
         );
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(2, 0)),
-            8
+            3
         );
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(2, 1)),
-            8
+            5
         );
         assert_eq!(
             grid.number_of_live_neighbors_for(CellCoordinates::new(2, 2)),
-            8
+            3
         );
     }
 
