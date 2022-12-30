@@ -13,6 +13,14 @@ impl CellCoordinates {
         self.row == 0 && self.column == 0
     }
 
+    pub fn is_top_row(&self) -> bool {
+        self.row == 0
+    }
+
+    pub fn is_left_column(&self) -> bool {
+        self.column == 0
+    }
+
     pub fn recalculate_to_origin(&self, new_origin: &CellCoordinates) -> Self {
         let front_grid_row = self.row - new_origin.row;
         let front_grid_column = self.column - new_origin.column;

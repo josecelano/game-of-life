@@ -95,6 +95,8 @@ impl Grid {
 
         let neighbors = self.get_neighbors(&cell_coordinates);
 
+        assert_eq!(neighbors.len(), 8);
+
         let live_neighbors =
             neighbors
                 .iter()
@@ -140,7 +142,24 @@ impl Grid {
 
     fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
         if !self.has_left_top_neighbor(cell_coordinates) {
-            return None;
+            if cell_coordinates.is_left_top_corner() {
+                // Case 1
+                return Some(
+                    self.get_cell(CellCoordinates::new(self.rows() - 1, self.columns() - 1)),
+                );
+            } else if self.is_top_row(cell_coordinates) {
+                // Case 2
+                return Some(self.get_cell(CellCoordinates::new(
+                    self.rows() - 1,
+                    cell_coordinates.column - 1,
+                )));
+            } else {
+                // Case 3
+                return Some(self.get_cell(CellCoordinates::new(
+                    cell_coordinates.row - 1,
+                    self.columns() - 1,
+                )));
+            }
         }
 
         Some(self.get_cell(CellCoordinates::new(
@@ -150,16 +169,15 @@ impl Grid {
     }
 
     fn has_left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
-        !self.is_left_top_corner(cell_coordinates)
-    }
-
-    fn is_left_top_corner(&self, cell_coordinates: &CellCoordinates) -> bool {
-        cell_coordinates.row == 0 || cell_coordinates.column == 0
+        !self.is_top_row(cell_coordinates) && !self.is_left_column(cell_coordinates)
     }
 
     fn top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
         if !self.has_top_neighbor(cell_coordinates) {
-            return None;
+            return Some(self.get_cell(CellCoordinates::new(
+                self.rows() - 1,
+                cell_coordinates.column,
+            )));
         }
 
         Some(self.get_cell(CellCoordinates::new(
@@ -173,12 +191,24 @@ impl Grid {
     }
 
     fn is_top_row(&self, cell_coordinates: &CellCoordinates) -> bool {
-        cell_coordinates.row == 0
+        cell_coordinates.is_top_row()
     }
 
     fn right_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
         if !self.has_right_top_neighbor(cell_coordinates) {
-            return None;
+            if self.is_right_top_corner(cell_coordinates) {
+                // Case 1
+                return Some(self.get_cell(CellCoordinates::new(self.rows() - 1, 0)));
+            } else if self.is_top_row(cell_coordinates) {
+                // Case 2
+                return Some(self.get_cell(CellCoordinates::new(
+                    self.rows() - 1,
+                    cell_coordinates.column + 1,
+                )));
+            } else {
+                // Case 3
+                return Some(self.get_cell(CellCoordinates::new(cell_coordinates.row - 1, 0)));
+            }
         }
 
         Some(self.get_cell(CellCoordinates::new(
@@ -188,16 +218,19 @@ impl Grid {
     }
 
     fn has_right_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
-        !self.is_right_top_corner(cell_coordinates)
+        !self.is_top_row(cell_coordinates) && !self.is_right_column(cell_coordinates)
     }
 
     fn is_right_top_corner(&self, cell_coordinates: &CellCoordinates) -> bool {
-        cell_coordinates.row == 0 || cell_coordinates.column == self.columns() - 1
+        cell_coordinates.row == 0 && cell_coordinates.column == self.columns() - 1
     }
 
     fn left_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
         if !self.has_left_neighbor(cell_coordinates) {
-            return None;
+            return Some(self.get_cell(CellCoordinates::new(
+                cell_coordinates.row,
+                self.columns() - 1,
+            )));
         }
 
         Some(self.get_cell(CellCoordinates::new(
@@ -216,7 +249,7 @@ impl Grid {
 
     fn right_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
         if !self.has_right_neighbor(cell_coordinates) {
-            return None;
+            return Some(self.get_cell(CellCoordinates::new(cell_coordinates.row, 0)));
         }
 
         Some(self.get_cell(CellCoordinates::new(
@@ -235,7 +268,19 @@ impl Grid {
 
     fn left_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
         if !self.has_left_bottom_neighbor(cell_coordinates) {
-            return None;
+            if self.is_left_bottom_corner(cell_coordinates) {
+                // Case 1
+                return Some(self.get_cell(CellCoordinates::new(0, self.columns() - 1)));
+            } else if self.is_bottom_row(cell_coordinates) {
+                // Case 2
+                return Some(self.get_cell(CellCoordinates::new(0, cell_coordinates.column - 1)));
+            } else {
+                // Case 3
+                return Some(self.get_cell(CellCoordinates::new(
+                    cell_coordinates.row + 1,
+                    self.columns() - 1,
+                )));
+            }
         }
 
         Some(self.get_cell(CellCoordinates::new(
@@ -245,16 +290,16 @@ impl Grid {
     }
 
     fn has_left_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
-        !self.is_left_bottom_corner(cell_coordinates)
+        !self.is_bottom_row(cell_coordinates) && !self.is_left_column(cell_coordinates)
     }
 
     fn is_left_bottom_corner(&self, cell_coordinates: &CellCoordinates) -> bool {
-        cell_coordinates.row == self.rows() - 1 || cell_coordinates.column == 0
+        cell_coordinates.row == self.rows() - 1 && cell_coordinates.column == 0
     }
 
     fn bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
         if !self.has_bottom_neighbor(cell_coordinates) {
-            return None;
+            return Some(self.get_cell(CellCoordinates::new(0, cell_coordinates.column)));
         }
 
         Some(self.get_cell(CellCoordinates::new(
@@ -273,7 +318,16 @@ impl Grid {
 
     fn right_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
         if !self.has_right_bottom_neighbor(cell_coordinates) {
-            return None;
+            if self.is_right_bottom_corner(cell_coordinates) {
+                // Case 1
+                return Some(self.get_cell(CellCoordinates::new(0, 0)));
+            } else if self.is_bottom_row(cell_coordinates) {
+                // Case 2
+                return Some(self.get_cell(CellCoordinates::new(0, cell_coordinates.column + 1)));
+            } else {
+                // Case 3
+                return Some(self.get_cell(CellCoordinates::new(cell_coordinates.row + 1, 0)));
+            }
         }
 
         Some(self.get_cell(CellCoordinates::new(
@@ -283,11 +337,11 @@ impl Grid {
     }
 
     fn has_right_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> bool {
-        !self.is_right_bottom_corner(cell_coordinates)
+        !self.is_bottom_row(cell_coordinates) && !self.is_right_column(cell_coordinates)
     }
 
     fn is_right_bottom_corner(&self, cell_coordinates: &CellCoordinates) -> bool {
-        cell_coordinates.row == self.rows() - 1 || cell_coordinates.column == self.columns() - 1
+        cell_coordinates.row == self.rows() - 1 && cell_coordinates.column == self.columns() - 1
     }
 }
 
@@ -384,51 +438,360 @@ mod tests {
         );
     }
 
-    fn all_live_3x3_grid() -> Grid {
-        Grid::new(vec![
-            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-            CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-        ])
+    #[test]
+    fn some_cells_do_not_have_a_left_top_neighbor() {
+        // White (live) cells do not have a left top neighbor
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+        ]);
+
+        assert!(!grid.has_left_top_neighbor(&CellCoordinates::new(0, 0)));
+        assert!(!grid.has_left_top_neighbor(&CellCoordinates::new(0, 1)));
+        assert!(!grid.has_left_top_neighbor(&CellCoordinates::new(0, 2)));
+
+        assert!(!grid.has_left_top_neighbor(&CellCoordinates::new(1, 0)));
+        assert!(grid.has_left_top_neighbor(&CellCoordinates::new(1, 1)));
+        assert!(grid.has_left_top_neighbor(&CellCoordinates::new(1, 2)));
+
+        assert!(!grid.has_left_top_neighbor(&CellCoordinates::new(2, 0)));
+        assert!(grid.has_left_top_neighbor(&CellCoordinates::new(2, 1)));
+        assert!(grid.has_left_top_neighbor(&CellCoordinates::new(2, 2)));
     }
 
     #[test]
-    fn given_a_cell_without_neighbors_we_consider_them_dead_neighbors() {
-        let grid = all_live_3x3_grid();
+    fn some_cells_do_not_have_a_top_neighbor() {
+        // White (live) cells do not have a top neighbor
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+        ]);
 
-        assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(0, 0)),
-            3
-        );
-        assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(0, 1)),
-            5
-        );
-        assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(0, 2)),
-            3
-        );
-        assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 0)),
-            5
-        );
-        // Cell (1,1) has all the neighbors
-        assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 2)),
-            5
-        );
-        assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(2, 0)),
-            3
-        );
-        assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(2, 1)),
-            5
-        );
-        assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(2, 2)),
-            3
-        );
+        assert!(!grid.has_top_neighbor(&CellCoordinates::new(0, 0)));
+        assert!(!grid.has_top_neighbor(&CellCoordinates::new(0, 1)));
+        assert!(!grid.has_top_neighbor(&CellCoordinates::new(0, 2)));
+
+        assert!(grid.has_top_neighbor(&CellCoordinates::new(1, 0)));
+        assert!(grid.has_top_neighbor(&CellCoordinates::new(1, 1)));
+        assert!(grid.has_top_neighbor(&CellCoordinates::new(1, 2)));
+
+        assert!(grid.has_top_neighbor(&CellCoordinates::new(2, 0)));
+        assert!(grid.has_top_neighbor(&CellCoordinates::new(2, 1)));
+        assert!(grid.has_top_neighbor(&CellCoordinates::new(2, 2)));
+    }
+
+    #[test]
+    fn some_cells_do_not_have_a_right_top_neighbor() {
+        // White (live) cells do not have a right top neighbor
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+        ]);
+
+        assert!(!grid.has_right_top_neighbor(&CellCoordinates::new(0, 0)));
+        assert!(!grid.has_right_top_neighbor(&CellCoordinates::new(0, 1)));
+        assert!(!grid.has_right_top_neighbor(&CellCoordinates::new(0, 2)));
+
+        assert!(grid.has_right_top_neighbor(&CellCoordinates::new(1, 0)));
+        assert!(grid.has_right_top_neighbor(&CellCoordinates::new(1, 1)));
+        assert!(!grid.has_right_top_neighbor(&CellCoordinates::new(1, 2)));
+
+        assert!(grid.has_right_top_neighbor(&CellCoordinates::new(2, 0)));
+        assert!(grid.has_right_top_neighbor(&CellCoordinates::new(2, 1)));
+        assert!(!grid.has_right_top_neighbor(&CellCoordinates::new(2, 2)));
+    }
+
+    #[test]
+    fn some_cells_do_not_have_a_left_neighbor() {
+        // White (live) cells do not have a left neighbor
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+        ]);
+
+        assert!(!grid.has_left_neighbor(&CellCoordinates::new(0, 0)));
+        assert!(grid.has_left_neighbor(&CellCoordinates::new(0, 1)));
+        assert!(grid.has_left_neighbor(&CellCoordinates::new(0, 2)));
+
+        assert!(!grid.has_left_neighbor(&CellCoordinates::new(1, 0)));
+        assert!(grid.has_left_neighbor(&CellCoordinates::new(1, 1)));
+        assert!(grid.has_left_neighbor(&CellCoordinates::new(1, 2)));
+
+        assert!(!grid.has_left_neighbor(&CellCoordinates::new(2, 0)));
+        assert!(grid.has_left_neighbor(&CellCoordinates::new(2, 1)));
+        assert!(grid.has_left_neighbor(&CellCoordinates::new(2, 2)));
+    }
+
+    #[test]
+    fn some_cells_do_not_have_a_right_neighbor() {
+        // White (live) cells do not have a right neighbor
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+        ]);
+
+        assert!(grid.has_right_neighbor(&CellCoordinates::new(0, 0)));
+        assert!(grid.has_right_neighbor(&CellCoordinates::new(0, 1)));
+        assert!(!grid.has_right_neighbor(&CellCoordinates::new(0, 2)));
+
+        assert!(grid.has_right_neighbor(&CellCoordinates::new(1, 0)));
+        assert!(grid.has_right_neighbor(&CellCoordinates::new(1, 1)));
+        assert!(!grid.has_right_neighbor(&CellCoordinates::new(1, 2)));
+
+        assert!(grid.has_right_neighbor(&CellCoordinates::new(2, 0)));
+        assert!(grid.has_right_neighbor(&CellCoordinates::new(2, 1)));
+        assert!(!grid.has_right_neighbor(&CellCoordinates::new(2, 2)));
+    }
+
+    #[test]
+    fn some_cells_do_not_have_a_left_bottom_neighbor() {
+        // White (live) cells do not have a left bottom neighbor
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+        ]);
+
+        assert!(!grid.has_left_bottom_neighbor(&CellCoordinates::new(0, 0)));
+        assert!(grid.has_left_bottom_neighbor(&CellCoordinates::new(0, 1)));
+        assert!(grid.has_left_bottom_neighbor(&CellCoordinates::new(0, 2)));
+
+        assert!(!grid.has_left_bottom_neighbor(&CellCoordinates::new(1, 0)));
+        assert!(grid.has_left_bottom_neighbor(&CellCoordinates::new(1, 1)));
+        assert!(grid.has_left_bottom_neighbor(&CellCoordinates::new(1, 2)));
+
+        assert!(!grid.has_left_bottom_neighbor(&CellCoordinates::new(2, 0)));
+        assert!(!grid.has_left_bottom_neighbor(&CellCoordinates::new(2, 1)));
+        assert!(!grid.has_left_bottom_neighbor(&CellCoordinates::new(2, 2)));
+    }
+
+    #[test]
+    fn some_cells_do_not_have_a_bottom_neighbor() {
+        // White (live) cells do not have a bottom neighbor
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+        ]);
+
+        assert!(grid.has_bottom_neighbor(&CellCoordinates::new(0, 0)));
+        assert!(grid.has_bottom_neighbor(&CellCoordinates::new(0, 1)));
+        assert!(grid.has_bottom_neighbor(&CellCoordinates::new(0, 2)));
+
+        assert!(grid.has_bottom_neighbor(&CellCoordinates::new(1, 0)));
+        assert!(grid.has_bottom_neighbor(&CellCoordinates::new(1, 1)));
+        assert!(grid.has_bottom_neighbor(&CellCoordinates::new(1, 2)));
+
+        assert!(!grid.has_bottom_neighbor(&CellCoordinates::new(2, 0)));
+        assert!(!grid.has_bottom_neighbor(&CellCoordinates::new(2, 1)));
+        assert!(!grid.has_bottom_neighbor(&CellCoordinates::new(2, 2)));
+    }
+
+    #[test]
+    fn some_cells_do_not_have_a_right_bottom_neighbor() {
+        // White (live) cells do not have a right bottom neighbor
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+            CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+        ]);
+
+        assert!(grid.has_right_bottom_neighbor(&CellCoordinates::new(0, 0)));
+        assert!(grid.has_right_bottom_neighbor(&CellCoordinates::new(0, 1)));
+        assert!(!grid.has_right_bottom_neighbor(&CellCoordinates::new(0, 2)));
+
+        assert!(grid.has_right_bottom_neighbor(&CellCoordinates::new(1, 0)));
+        assert!(grid.has_right_bottom_neighbor(&CellCoordinates::new(1, 1)));
+        assert!(!grid.has_right_bottom_neighbor(&CellCoordinates::new(1, 2)));
+
+        assert!(!grid.has_right_bottom_neighbor(&CellCoordinates::new(2, 0)));
+        assert!(!grid.has_right_bottom_neighbor(&CellCoordinates::new(2, 1)));
+        assert!(!grid.has_right_bottom_neighbor(&CellCoordinates::new(2, 2)));
+    }
+
+    mod the_edges_are_stitched_together {
+        use crate::{cell::c, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid};
+
+        #[test]
+        fn no_left_top_neighbor_case() {
+            // Case 1: left top corner
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+            ])
+            .left_top_neighbor(&CellCoordinates::new(0, 0))
+            .unwrap()
+            .is_live());
+
+            // Case 2: top row
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            ])
+            .left_top_neighbor(&CellCoordinates::new(0, 1))
+            .unwrap()
+            .is_live());
+
+            // Case 3: left column
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            ])
+            .left_top_neighbor(&CellCoordinates::new(1, 0))
+            .unwrap()
+            .is_live());
+        }
+
+        #[test]
+        fn no_top_neighbor_case() {
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛')]),
+                CellRow::new(vec![c('⬛')]),
+                CellRow::new(vec![c('⬜')]),
+            ])
+            .top_neighbor(&CellCoordinates::new(0, 0))
+            .unwrap()
+            .is_live());
+        }
+
+        #[test]
+        fn no_right_top_neighbor_case() {
+            // Case 1: right top corner
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            ])
+            .right_top_neighbor(&CellCoordinates::new(0, 2))
+            .unwrap()
+            .is_live());
+
+            // Case 2: top row
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+            ])
+            .right_top_neighbor(&CellCoordinates::new(0, 1))
+            .unwrap()
+            .is_live());
+
+            // Case 3: right column
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            ])
+            .right_top_neighbor(&CellCoordinates::new(1, 2))
+            .unwrap()
+            .is_live());
+        }
+
+        #[test]
+        fn no_left_neighbor_case() {
+            assert!(
+                Grid::new(vec![CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),])
+                    .left_neighbor(&CellCoordinates::new(0, 0))
+                    .unwrap()
+                    .is_live()
+            );
+        }
+
+        #[test]
+        fn no_right_neighbor_case() {
+            assert!(
+                Grid::new(vec![CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),])
+                    .right_neighbor(&CellCoordinates::new(0, 2))
+                    .unwrap()
+                    .is_live()
+            );
+        }
+
+        #[test]
+        fn no_left_bottom_neighbor_case() {
+            // Case 1: left bottom corner
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            ])
+            .left_bottom_neighbor(&CellCoordinates::new(2, 0))
+            .unwrap()
+            .is_live());
+
+            // Case 2: bottom row
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            ])
+            .left_bottom_neighbor(&CellCoordinates::new(2, 1))
+            .unwrap()
+            .is_live());
+
+            // Case 3: left column
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+            ])
+            .left_bottom_neighbor(&CellCoordinates::new(1, 0))
+            .unwrap()
+            .is_live());
+        }
+
+        #[test]
+        fn no_bottom_neighbor_case() {
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬜')]),
+                CellRow::new(vec![c('⬛')]),
+                CellRow::new(vec![c('⬛')]),
+            ])
+            .bottom_neighbor(&CellCoordinates::new(2, 0))
+            .unwrap()
+            .is_live());
+        }
+
+        #[test]
+        fn no_right_bottom_neighbor_case() {
+            // Case 1: right bottom corner
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            ])
+            .right_bottom_neighbor(&CellCoordinates::new(2, 2))
+            .unwrap()
+            .is_live());
+
+            // Case 2: bottom row
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+            ])
+            .right_bottom_neighbor(&CellCoordinates::new(2, 1))
+            .unwrap()
+            .is_live());
+
+            // Case 3: right column
+            assert!(Grid::new(vec![
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
+                CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
+            ])
+            .right_bottom_neighbor(&CellCoordinates::new(1, 2))
+            .unwrap()
+            .is_live());
+        }
     }
 
     #[test]

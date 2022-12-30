@@ -137,4 +137,23 @@ mod tests {
             .get_cell(CellCoordinates::new(1, 1))
             .is_dead());
     }
+
+    #[test]
+    fn grid_edges_are_stitched_together() {
+        let grid = Grid::new(vec![
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬜'), c('⬜'), c('⬜'), c('⬛')]),
+        ]);
+
+        let expected_grid = Grid::new(vec![
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬛'), c('⬛')]),
+            CellRow::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬛'), c('⬛')]),
+        ]);
+
+        let actual_grid = next_generation(&grid);
+
+        assert_eq!(actual_grid, expected_grid);
+    }
 }
