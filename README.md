@@ -2,7 +2,7 @@
 
 A Conway's Game of Live kata in Rust.
 
-WIP: it only works with patterns inside, and the cells outside the grid are considered live, which produces the effect of creating a lot of new cells since the beginning.
+![Game of Life](./docs/media/game-of-life.gif)
 
 The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, live or dead (or populated and unpopulated, respectively). Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent.
 
@@ -43,12 +43,21 @@ cargo test
 
 ## TODO
 
-- Allow merging grid. The idea is to put a pattern (a grid) inside another grid.
 - Move `grid_printer` to `grid_functions`.
-- Refactor `get_cell` to return `Option<&Cell>` instead of panicking when the position is out of range?
 - Add a new `Grid` constructor from `String` with the same text of the render output. It could be the trait to convert from and into String.
+- Add a gif in this README playing the game.
 
 ## Ideas
 
 - A new grid function `grid_expand` could be used to expand a pattern grid. It could be implemented internally with `grip_overlap`. It expands from the grid center.
 - Implement an iterator for the Grid that gives you a pair `(CellCoordinates, &Cell)`. To avoid double loop and make it more functional.
+- Create a toroidal array and use it like the container in the grid.
+- Refactor `get_cell` to return `Option<&Cell>` instead of panicking when the position is out of range.
+
+## Refactors
+
+- `cell_coordinates.column - 1` -> `cell_coordinates.previous_column`?
+- `self.rows() - 1` -> `self.last_row()`?
+- Replace `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell>` with `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell`? Now all cells have always a neighbor.
+- In functions `fn XXX_neighbor(...)` try to use a modulus to simplify cases.
+- Replace `fn get_neighbor(&self, cell_coordinates: &CellCoordinates, neighbor: NeighborPosition) -> Option<&Cell>` with `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell>`?.
