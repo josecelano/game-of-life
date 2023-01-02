@@ -59,5 +59,4 @@ cargo test
 - `cell_coordinates.column - 1` -> `cell_coordinates.previous_column`?
 - `self.rows() - 1` -> `self.last_row()`?
 - Replace `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell>` with `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell`? Now all cells have always a neighbor.
-- In functions `fn XXX_neighbor(...)` try to use a modulus to simplify cases.
-- Replace `fn get_neighbor(&self, cell_coordinates: &CellCoordinates, neighbor: NeighborPosition) -> Option<&Cell>` with `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell>`?.
+- Replace `fn get_neighbor(&self, cell_coordinates: &CellCoordinates, neighbor: NeighborPosition) -> Option<&Cell>` with `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates, neighbor: NeighborPosition) -> Option<&Cell>`?.
