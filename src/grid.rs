@@ -119,16 +119,16 @@ impl Grid {
     fn get_neighbors(&self, cell_coordinates: &CellCoordinates) -> Vec<&Cell> {
         neighbor_positions()
             .iter()
-            .filter_map(|neighbor| self.get_neighbor(cell_coordinates, *neighbor))
+            .map(|neighbor_position| self.get_neighbor(cell_coordinates, *neighbor_position))
             .collect()
     }
 
     fn get_neighbor(
         &self,
         cell_coordinates: &CellCoordinates,
-        position: NeighborPosition,
-    ) -> Option<&Cell> {
-        match position {
+        neighbor_position: NeighborPosition,
+    ) -> &Cell {
+        match neighbor_position {
             NeighborPosition::LeftTop => self.left_top_neighbor(cell_coordinates),
             NeighborPosition::Top => self.top_neighbor(cell_coordinates),
             NeighborPosition::RightTop => self.right_top_neighbor(cell_coordinates),
@@ -140,36 +140,36 @@ impl Grid {
         }
     }
 
-    fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
-        Some(self.get_cell(self.cell_coordinate_translate(cell_coordinates, -1, -1)))
+    fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.get_cell(self.cell_coordinate_translate(cell_coordinates, -1, -1))
     }
 
-    fn top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
-        Some(self.get_cell(self.cell_coordinate_translate(cell_coordinates, -1, 0)))
+    fn top_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.get_cell(self.cell_coordinate_translate(cell_coordinates, -1, 0))
     }
 
-    fn right_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
-        Some(self.get_cell(self.cell_coordinate_translate(cell_coordinates, -1, 1)))
+    fn right_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.get_cell(self.cell_coordinate_translate(cell_coordinates, -1, 1))
     }
 
-    fn left_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
-        Some(self.get_cell(self.cell_coordinate_translate(cell_coordinates, 0, -1)))
+    fn left_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.get_cell(self.cell_coordinate_translate(cell_coordinates, 0, -1))
     }
 
-    fn right_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
-        Some(self.get_cell(self.cell_coordinate_translate(cell_coordinates, 0, 1)))
+    fn right_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.get_cell(self.cell_coordinate_translate(cell_coordinates, 0, 1))
     }
 
-    fn left_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
-        Some(self.get_cell(self.cell_coordinate_translate(cell_coordinates, 1, -1)))
+    fn left_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.get_cell(self.cell_coordinate_translate(cell_coordinates, 1, -1))
     }
 
-    fn bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
-        Some(self.get_cell(self.cell_coordinate_translate(cell_coordinates, 1, 0)))
+    fn bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.get_cell(self.cell_coordinate_translate(cell_coordinates, 1, 0))
     }
 
-    fn right_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell> {
-        Some(self.get_cell(self.cell_coordinate_translate(cell_coordinates, 1, 1)))
+    fn right_bottom_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.get_cell(self.cell_coordinate_translate(cell_coordinates, 1, 1))
     }
 
     /// It handles toroidal array positions
@@ -307,7 +307,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
             ])
             .left_top_neighbor(&CellCoordinates::new(0, 0))
-            .unwrap()
             .is_live());
 
             // Case 2: top row
@@ -317,7 +316,6 @@ mod tests {
                 CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
             ])
             .left_top_neighbor(&CellCoordinates::new(0, 1))
-            .unwrap()
             .is_live());
 
             // Case 3: left column
@@ -327,7 +325,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
             ])
             .left_top_neighbor(&CellCoordinates::new(1, 0))
-            .unwrap()
             .is_live());
         }
 
@@ -339,7 +336,6 @@ mod tests {
                 CellRow::new(vec![c('⬜')]),
             ])
             .top_neighbor(&CellCoordinates::new(0, 0))
-            .unwrap()
             .is_live());
         }
 
@@ -352,7 +348,6 @@ mod tests {
                 CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
             ])
             .right_top_neighbor(&CellCoordinates::new(0, 2))
-            .unwrap()
             .is_live());
 
             // Case 2: top row
@@ -362,7 +357,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
             ])
             .right_top_neighbor(&CellCoordinates::new(0, 1))
-            .unwrap()
             .is_live());
 
             // Case 3: right column
@@ -372,7 +366,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
             ])
             .right_top_neighbor(&CellCoordinates::new(1, 2))
-            .unwrap()
             .is_live());
         }
 
@@ -381,7 +374,6 @@ mod tests {
             assert!(
                 Grid::new(vec![CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),])
                     .left_neighbor(&CellCoordinates::new(0, 0))
-                    .unwrap()
                     .is_live()
             );
         }
@@ -391,7 +383,6 @@ mod tests {
             assert!(
                 Grid::new(vec![CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),])
                     .right_neighbor(&CellCoordinates::new(0, 2))
-                    .unwrap()
                     .is_live()
             );
         }
@@ -405,7 +396,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
             ])
             .left_bottom_neighbor(&CellCoordinates::new(2, 0))
-            .unwrap()
             .is_live());
 
             // Case 2: bottom row
@@ -415,7 +405,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
             ])
             .left_bottom_neighbor(&CellCoordinates::new(2, 1))
-            .unwrap()
             .is_live());
 
             // Case 3: left column
@@ -425,7 +414,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬜')]),
             ])
             .left_bottom_neighbor(&CellCoordinates::new(1, 0))
-            .unwrap()
             .is_live());
         }
 
@@ -437,7 +425,6 @@ mod tests {
                 CellRow::new(vec![c('⬛')]),
             ])
             .bottom_neighbor(&CellCoordinates::new(2, 0))
-            .unwrap()
             .is_live());
         }
 
@@ -450,7 +437,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
             ])
             .right_bottom_neighbor(&CellCoordinates::new(2, 2))
-            .unwrap()
             .is_live());
 
             // Case 2: bottom row
@@ -460,7 +446,6 @@ mod tests {
                 CellRow::new(vec![c('⬛'), c('⬛'), c('⬛')]),
             ])
             .right_bottom_neighbor(&CellCoordinates::new(2, 1))
-            .unwrap()
             .is_live());
 
             // Case 3: right column
@@ -470,7 +455,6 @@ mod tests {
                 CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')]),
             ])
             .right_bottom_neighbor(&CellCoordinates::new(1, 2))
-            .unwrap()
             .is_live());
         }
     }
