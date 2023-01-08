@@ -43,7 +43,6 @@ cargo test
 
 ## TODO
 
-- Move `grid_printer` to `grid_functions`.
 - Add a new `Grid` constructor from `String` with the same text of the render output. It could be the trait to convert from and into String.
 - Add a gif in this README playing the game.
 
@@ -52,11 +51,3 @@ cargo test
 - A new grid function `grid_expand` could be used to expand a pattern grid. It could be implemented internally with `grip_overlap`. It expands from the grid center.
 - Implement an iterator for the Grid that gives you a pair `(CellCoordinates, &Cell)`. To avoid double loop and make it more functional.
 - Create a toroidal array and use it like the container in the grid.
-- Refactor `get_cell` to return `Option<&Cell>` instead of panicking when the position is out of range.
-
-## Refactors
-
-- `cell_coordinates.column - 1` -> `cell_coordinates.previous_column`?
-- `self.rows() - 1` -> `self.last_row()`?
-- Replace `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> Option<&Cell>` with `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates) -> &Cell`? Now all cells have always a neighbor.
-- Replace `fn get_neighbor(&self, cell_coordinates: &CellCoordinates, neighbor: NeighborPosition) -> Option<&Cell>` with `fn left_top_neighbor(&self, cell_coordinates: &CellCoordinates, neighbor: NeighborPosition) -> Option<&Cell>`?.
