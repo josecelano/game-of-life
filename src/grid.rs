@@ -1,3 +1,4 @@
+use crate::cell::CellState;
 use crate::{
     cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid_size::GridSize,
     grid_traverser::GridTraverser,
@@ -8,10 +9,11 @@ pub struct Grid {
     pub cell_rows: Vec<CellRow>,
 }
 
-impl Default for Grid {
-    fn default() -> Self {
-        Self::new(vec![])
-    }
+/// Info needed to calculate the cell state in the next generation
+#[derive(Debug, PartialEq)]
+pub struct CellInfo {
+    pub number_of_live_neighbors: usize,
+    pub state: CellState,
 }
 
 enum Neighbor {
@@ -82,6 +84,12 @@ impl NeighborDistance {
     }
 }
 
+impl Default for Grid {
+    fn default() -> Self {
+        Self::new(vec![])
+    }
+}
+
 impl Grid {
     pub fn new(cell_rows: Vec<CellRow>) -> Self {
         if !cell_rows.is_empty() {
@@ -138,16 +146,23 @@ impl Grid {
         self.number_of_cells() == 0
     }
 
-    pub fn get_cell(&self, pos: CellCoordinates) -> &Cell {
-        self.cell_rows[pos.row].get_cell(pos.column)
+    pub fn get_cell(&self, cell_coordinates: &CellCoordinates) -> &Cell {
+        self.cell_rows[cell_coordinates.row].get_cell(cell_coordinates.column)
     }
 
-    pub fn number_of_live_neighbors_for(&self, cell_coordinates: CellCoordinates) -> usize {
+    pub fn get_cell_info(&self, cell_coordinates: &CellCoordinates) -> CellInfo {
+        CellInfo {
+            number_of_live_neighbors: self.number_of_live_neighbors_for(cell_coordinates),
+            state: self.get_cell(cell_coordinates).state(),
+        }
+    }
+
+    pub fn number_of_live_neighbors_for(&self, cell_coordinates: &CellCoordinates) -> usize {
         if self.number_of_cells() == 1 {
             return 0;
         }
 
-        let neighbors = self.get_neighbors(&cell_coordinates);
+        let neighbors = self.get_neighbors(cell_coordinates);
 
         assert_eq!(neighbors.len(), 8);
 
@@ -183,7 +198,7 @@ impl Grid {
 
     fn get_neighbor(&self, cell_coordinate: &CellCoordinates, neighbor: &Neighbor) -> &Cell {
         self.get_cell(
-            self.cell_coordinate_translate(cell_coordinate, &NeighborDistance::new(neighbor)),
+            &self.cell_coordinate_translate(cell_coordinate, &NeighborDistance::new(neighbor)),
         )
     }
 
@@ -235,10 +250,10 @@ impl Grid {
 #[cfg(test)]
 mod tests {
     use crate::{
-        cell::{c, Cell},
+        cell::{c, Cell, CellState},
         cell_coordinates::CellCoordinates,
         cell_row::CellRow,
-        grid::Grid,
+        grid::{CellInfo, Grid},
         grid_size::GridSize,
     };
 
@@ -318,7 +333,7 @@ mod tests {
         let grid = Grid::new(vec![CellRow::new(vec![Cell::live()])]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(0, 0)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(0, 0)),
             0
         );
     }
@@ -332,7 +347,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             8
         );
     }
@@ -515,7 +530,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             1
         );
 
@@ -526,7 +541,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             2
         );
 
@@ -537,7 +552,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             3
         );
 
@@ -548,7 +563,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             4
         );
 
@@ -559,7 +574,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             5
         );
 
@@ -570,7 +585,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             6
         );
 
@@ -581,7 +596,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             7
         );
 
@@ -592,7 +607,7 @@ mod tests {
         ]);
 
         assert_eq!(
-            grid.number_of_live_neighbors_for(CellCoordinates::new(1, 1)),
+            grid.number_of_live_neighbors_for(&CellCoordinates::new(1, 1)),
             8
         );
     }
@@ -628,5 +643,16 @@ mod tests {
 
         assert!(!Grid::of_dead_cells(10, 10).position_is_valid(&CellCoordinates::new(10, 0)));
         assert!(!Grid::of_dead_cells(10, 10).position_is_valid(&CellCoordinates::new(0, 10)));
+    }
+
+    #[test]
+    fn it_should_return_the_info_needed_to_calculate_the_cell_state_in_the_next_generation() {
+        assert_eq!(
+            Grid::of_live_cells(1, 1).get_cell_info(&CellCoordinates::new(0, 0)),
+            CellInfo {
+                number_of_live_neighbors: 0,
+                state: CellState::Live
+            }
+        );
     }
 }

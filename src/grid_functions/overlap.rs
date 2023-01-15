@@ -128,8 +128,8 @@ fn calculate_new_cell(
     front_grid_position: &CellCoordinates,
 ) -> Cell {
     match overlapped_cell(&cell_coordinates, front_grid, front_grid_position) {
-        None => back_grid.get_cell(cell_coordinates).clone(),
-        Some(front_cell_pos) => front_grid.get_cell(front_cell_pos).clone(),
+        None => back_grid.get_cell(&cell_coordinates).clone(),
+        Some(front_cell_pos) => front_grid.get_cell(&front_cell_pos).clone(),
     }
 }
 

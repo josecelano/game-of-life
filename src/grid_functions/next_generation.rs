@@ -1,35 +1,47 @@
 /// Calculate the next generation of cells for the grid
-use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid};
+use crate::{
+    cell::{Cell, CellState},
+    cell_coordinates::CellCoordinates,
+    cell_row::CellRow,
+    grid::{CellInfo, Grid},
+};
 
 pub fn next_generation(grid: &Grid) -> Grid {
     let mut cell_rows = vec![];
-    for row in 0..grid.rows() {
-        let mut cells = vec![];
-        for column in 0..grid.columns() {
-            let coordinates = CellCoordinates::new(row, column);
-            let number_of_live_neighbours = grid.number_of_live_neighbors_for(coordinates);
 
-            // TODO: refactor:
-            // - Dir rules with different rules:
-            // - Add current rule 3/23 (life)
-            // - life_rule.apply(cell_state: CellState, number_of_life_neighbors) -> CellState
-            match grid.get_cell(coordinates).is_live() {
-                // Live cells
-                true => match number_of_live_neighbours {
-                    2 => cells.push(Cell::live()),
-                    3 => cells.push(Cell::live()),
-                    _ => cells.push(Cell::dead()),
-                },
-                // Dead cells
-                false => match number_of_live_neighbours {
-                    3 => cells.push(Cell::live()),
-                    _ => cells.push(Cell::dead()),
-                },
-            }
+    for row in 0..grid.rows() {
+        let mut cells_row = vec![];
+        for column in 0..grid.columns() {
+            cells_row.push(rule_b3_s23(
+                &grid.get_cell_info(&CellCoordinates::new(row, column)),
+            ));
         }
-        cell_rows.push(CellRow::new(cells))
+        cell_rows.push(CellRow::new(cells_row))
     }
+
     Grid::new(cell_rows)
+}
+
+/// Game of Life standard.
+///
+/// Rule-string notation: B3/S23
+///
+/// A cell:
+/// - is born if it has exactly three neighbours,
+/// - survives if it has two or three living neighbours,
+/// and dies otherwise.
+fn rule_b3_s23(cell_info: &CellInfo) -> Cell {
+    match cell_info.state {
+        CellState::Live => match cell_info.number_of_live_neighbors {
+            2 => Cell::live(),
+            3 => Cell::live(),
+            _ => Cell::dead(),
+        },
+        CellState::Dead => match cell_info.number_of_live_neighbors {
+            3 => Cell::live(),
+            _ => Cell::dead(),
+        },
+    }
 }
 
 #[cfg(test)]
@@ -55,7 +67,7 @@ mod tests {
         ]);
 
         assert!(next_generation(&grid)
-            .get_cell(CellCoordinates::new(1, 1))
+            .get_cell(&CellCoordinates::new(1, 1))
             .is_dead());
 
         let grid = Grid::new(vec![
@@ -65,7 +77,7 @@ mod tests {
         ]);
 
         assert!(next_generation(&grid)
-            .get_cell(CellCoordinates::new(1, 1))
+            .get_cell(&CellCoordinates::new(1, 1))
             .is_dead());
     }
 
@@ -78,7 +90,7 @@ mod tests {
         ]);
 
         assert!(next_generation(&grid)
-            .get_cell(CellCoordinates::new(1, 1))
+            .get_cell(&CellCoordinates::new(1, 1))
             .is_live());
 
         let grid = Grid::new(vec![
@@ -88,7 +100,7 @@ mod tests {
         ]);
 
         assert!(next_generation(&grid)
-            .get_cell(CellCoordinates::new(1, 1))
+            .get_cell(&CellCoordinates::new(1, 1))
             .is_live());
     }
 
@@ -101,7 +113,7 @@ mod tests {
         ]);
 
         assert!(next_generation(&grid)
-            .get_cell(CellCoordinates::new(1, 1))
+            .get_cell(&CellCoordinates::new(1, 1))
             .is_dead());
 
         let grid = Grid::new(vec![
@@ -111,7 +123,7 @@ mod tests {
         ]);
 
         assert!(next_generation(&grid)
-            .get_cell(CellCoordinates::new(1, 1))
+            .get_cell(&CellCoordinates::new(1, 1))
             .is_dead());
     }
 
@@ -124,7 +136,7 @@ mod tests {
         ]);
 
         assert!(next_generation(&grid)
-            .get_cell(CellCoordinates::new(1, 1))
+            .get_cell(&CellCoordinates::new(1, 1))
             .is_live());
 
         let grid = Grid::new(vec![
@@ -134,7 +146,7 @@ mod tests {
         ]);
 
         assert!(next_generation(&grid)
-            .get_cell(CellCoordinates::new(1, 1))
+            .get_cell(&CellCoordinates::new(1, 1))
             .is_dead());
     }
 

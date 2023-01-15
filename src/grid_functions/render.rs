@@ -5,7 +5,7 @@ pub fn display_grid(grid: &Grid) -> String {
     let mut output = String::new();
 
     for cell_coordinates in grid.iter() {
-        write!(&mut output, "{}", grid.get_cell(cell_coordinates)).unwrap();
+        write!(&mut output, "{}", grid.get_cell(&cell_coordinates)).unwrap();
 
         if grid.is_last_column(&cell_coordinates) {
             writeln!(&mut output).unwrap();

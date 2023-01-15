@@ -3,9 +3,15 @@ use std::fmt;
 const LIVE: char = '⬜';
 const DEAD: char = '⬛';
 
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CellState {
+    Live,
+    Dead,
+}
+
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Cell {
-    live: bool,
+    state: CellState,
 }
 
 // Cell from char constructor
@@ -39,19 +45,27 @@ impl fmt::Display for Cell {
 
 impl Cell {
     pub fn live() -> Self {
-        Self { live: true }
+        Self {
+            state: CellState::Live,
+        }
     }
 
     pub fn dead() -> Self {
-        Self { live: false }
+        Self {
+            state: CellState::Dead,
+        }
     }
 
     pub fn is_live(&self) -> bool {
-        self.live
+        self.state == CellState::Live
     }
 
     pub fn is_dead(&self) -> bool {
-        !self.is_live()
+        self.state == CellState::Dead
+    }
+
+    pub fn state(&self) -> CellState {
+        self.state.to_owned()
     }
 }
 
