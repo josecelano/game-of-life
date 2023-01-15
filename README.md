@@ -46,7 +46,6 @@ cargo test
 - Add a new `Grid` constructor from `String` with the same text of the render output. It could be the trait to convert from and into String.
 - Add a gif in this README playing the game.
 - Rename `render_grid`  to `display_grid`.
-- Implement `Display` for `Cell`.
 - Inject a closure `console_printer` into functions that write to console and replace `writeln!` macros like: `writeln!(&mut output).unwrap();`
 
 ## Ideas
