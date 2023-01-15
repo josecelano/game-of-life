@@ -1,18 +1,21 @@
-use crate::{cell_coordinates::CellCoordinates, grid::Grid};
+use crate::grid::Grid;
 use std::fmt::{self, Write};
 
 pub fn render_grid(grid: &Grid) -> String {
     let mut output = String::new();
-    for row in 0..grid.rows() {
-        for column in 0..grid.columns() {
-            let cell_char = match grid.get_cell(CellCoordinates::new(row, column)).is_live() {
-                true => "⬜".to_string(),
-                false => "⬛".to_string(),
-            };
-            write!(&mut output, "{}", cell_char).unwrap();
+
+    for cell_coordinates in grid.iter() {
+        let cell_char = match grid.get_cell(cell_coordinates).is_live() {
+            true => "⬜".to_string(),
+            false => "⬛".to_string(),
+        };
+        write!(&mut output, "{}", cell_char).unwrap();
+
+        if grid.is_last_column(&cell_coordinates) {
+            writeln!(&mut output).unwrap();
         }
-        writeln!(&mut output).unwrap();
     }
+
     output.to_string()
 }
 

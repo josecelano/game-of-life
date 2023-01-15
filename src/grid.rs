@@ -1,4 +1,7 @@
-use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow};
+use crate::{
+    cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid_size::GridSize,
+    grid_traverser::GridTraverser,
+};
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Grid {
@@ -108,6 +111,14 @@ impl Grid {
         }
     }
 
+    pub fn iter(&self) -> GridTraverser {
+        GridTraverser::new(self.size())
+    }
+
+    pub fn size(&self) -> GridSize {
+        GridSize::new(self.rows(), self.columns())
+    }
+
     pub fn rows(&self) -> usize {
         self.cell_rows.len()
     }
@@ -157,6 +168,10 @@ impl Grid {
 
     pub fn position_is_valid(&self, cell_coordinates: &CellCoordinates) -> bool {
         cell_coordinates.row < self.rows() && cell_coordinates.column < self.columns()
+    }
+
+    pub fn is_last_column(&self, cell_coordinates: &CellCoordinates) -> bool {
+        cell_coordinates.column as i64 == self.last_column()
     }
 
     fn get_neighbors(&self, cell_coordinates: &CellCoordinates) -> Vec<&Cell> {
@@ -224,6 +239,7 @@ mod tests {
         cell_coordinates::CellCoordinates,
         cell_row::CellRow,
         grid::Grid,
+        grid_size::GridSize,
     };
 
     #[test]
@@ -258,6 +274,17 @@ mod tests {
 
         assert_eq!(grid.rows(), 2);
         assert_eq!(grid.columns(), 3);
+    }
+
+    #[test]
+    fn a_grid_should_return_its_size() {
+        assert_eq!(Grid::of_live_cells(2, 2).size(), GridSize::new(2, 2));
+    }
+
+    #[test]
+    fn a_grid_should_return_wether_a_given_cell_coordinate_is_in_the_last_column() {
+        assert!(Grid::of_live_cells(2, 2).is_last_column(&CellCoordinates::new(0, 1)));
+        assert!(!Grid::of_live_cells(2, 2).is_last_column(&CellCoordinates::new(0, 0)));
     }
 
     #[test]
