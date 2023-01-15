@@ -3,7 +3,7 @@ use std::{thread, time::Duration};
 use crate::{
     cell_coordinates::CellCoordinates,
     grid::Grid,
-    grid_functions::{next_generation::next_generation, overlap::overlap, render::render_grid},
+    grid_functions::{next_generation::next_generation, overlap::overlap, render::display_grid},
     patters::glider::glider,
 };
 
@@ -25,7 +25,7 @@ pub fn play(generations: i64, generation_duration: Duration) -> String {
 
     for _iter in 0..generations {
         clear_screen();
-        output = render_grid(&grid);
+        output = display_grid(&grid);
         print!("{}", &output);
         grid = next_generation(&grid);
         thread::sleep(generation_duration);
