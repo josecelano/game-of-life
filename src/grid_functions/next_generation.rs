@@ -12,7 +12,7 @@ pub fn next_generation(grid: &Grid) -> Grid {
     for row in 0..grid.rows() {
         let mut cells_row = vec![];
         for column in 0..grid.columns() {
-            cells_row.push(rule_b3_s23(
+            cells_row.push(new_cell_applying_rule_b3_s23(
                 &grid.get_cell_info(&CellCoordinates::new(row, column)),
             ));
         }
@@ -30,7 +30,7 @@ pub fn next_generation(grid: &Grid) -> Grid {
 /// - is born if it has exactly three neighbours,
 /// - survives if it has two or three living neighbours,
 /// and dies otherwise.
-fn rule_b3_s23(cell_info: &CellInfo) -> Cell {
+fn new_cell_applying_rule_b3_s23(cell_info: &CellInfo) -> Cell {
     match cell_info.state {
         CellState::Live => match cell_info.number_of_live_neighbors {
             2 => Cell::live(),
