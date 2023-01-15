@@ -1,3 +1,5 @@
+use std::str::FromStr;
+
 use crate::cell::CellState;
 use crate::{
     cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid_size::GridSize,
@@ -87,6 +89,29 @@ impl NeighborDistance {
 impl Default for Grid {
     fn default() -> Self {
         Self::new(vec![])
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseGridError;
+
+impl FromStr for Grid {
+    type Err = ParseGridError;
+
+    fn from_str(text: &str) -> Result<Self, Self::Err> {
+        let trimmed_text = text.trim();
+
+        if trimmed_text.is_empty() {
+            return Ok(Grid::new_empty());
+        }
+
+        let mut cell_rows = vec![];
+
+        for line in trimmed_text.lines() {
+            cell_rows.push(line.parse().unwrap());
+        }
+
+        Ok(Grid::new(cell_rows))
     }
 }
 
@@ -654,5 +679,39 @@ mod tests {
                 state: CellState::Live
             }
         );
+    }
+
+    #[test]
+    fn it_should_be_converted_from_a_string() {
+        // Case: empty
+        let grid: Grid = "".parse().unwrap();
+        assert_eq!(grid, Grid::new_empty());
+
+        // Case: one life cell
+        let grid: Grid = "⬜".parse().unwrap();
+        assert_eq!(grid, Grid::new(vec![CellRow::new(vec![c('⬜')])]));
+
+        // Case: one dead cell
+        let grid: Grid = "⬛".parse().unwrap();
+        assert_eq!(grid, Grid::new(vec![CellRow::new(vec![c('⬛')])]));
+
+        // Case: 3x3
+        let grid: Grid = "
+        ⬜⬜⬜
+        ⬜⬛⬜
+        ⬜⬜⬜
+        "
+        .parse()
+        .unwrap();
+        assert_eq!(
+            grid,
+            Grid::new(vec![
+                CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+                CellRow::new(vec![c('⬜'), c('⬛'), c('⬜')]),
+                CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+            ])
+        );
+
+        // todo: parse error cases
     }
 }

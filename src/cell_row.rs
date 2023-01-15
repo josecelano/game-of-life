@@ -1,8 +1,29 @@
+use std::str::FromStr;
+
 use crate::cell::Cell;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct CellRow {
     cells: Vec<Cell>,
+}
+
+#[derive(Debug, PartialEq, Eq)]
+pub struct ParseCellRowError;
+
+impl FromStr for CellRow {
+    type Err = ParseCellRowError;
+
+    fn from_str(text: &str) -> Result<Self, Self::Err> {
+        // todo: add tests
+
+        let mut cells_row = vec![];
+
+        for c in text.trim().chars() {
+            cells_row.push(Cell::from(c));
+        }
+
+        Ok(CellRow::new(cells_row))
+    }
 }
 
 impl CellRow {
