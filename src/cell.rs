@@ -1,6 +1,6 @@
 use std::fmt;
 
-use crate::cell_state::CellState;
+use crate::cell_state::{CellState, ParseCellStateFromCharError};
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Cell {
@@ -14,16 +14,13 @@ pub fn c(state: char) -> Cell {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct InvalidCellCharRepresentation;
-
 impl TryFrom<char> for Cell {
-    type Error = InvalidCellCharRepresentation;
+    type Error = ParseCellStateFromCharError;
 
     fn try_from(state: char) -> Result<Self, Self::Error> {
         match CellState::try_from(state) {
             Ok(state) => Ok(Cell::new(state)),
-            _ => Err(InvalidCellCharRepresentation),
+            Err(error) => Err(error),
         }
     }
 }

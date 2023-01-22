@@ -1,32 +1,39 @@
-use std::str::FromStr;
+use std::{fmt, str::FromStr};
 
-use crate::cell::Cell;
+use crate::{cell::Cell, cell_state::ParseCellStateFromCharError};
+use std::fmt::Write;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct CellRow {
     cells: Vec<Cell>,
 }
 
-#[derive(Debug, PartialEq, Eq)]
-pub struct ParseCellRowError;
-
 impl FromStr for CellRow {
-    type Err = ParseCellRowError;
+    type Err = ParseCellStateFromCharError;
 
     fn from_str(text: &str) -> Result<Self, Self::Err> {
-        // todo: add tests
-
         let mut cells_row = vec![];
 
         for c in text.trim().chars() {
             match Cell::try_from(c) {
                 Ok(cell) => cells_row.push(cell),
-                // todo: return the invalid char in the error message
-                Err(_) => return Err(ParseCellRowError),
+                Err(error) => return Err(error),
             };
         }
 
         Ok(CellRow::new(cells_row))
+    }
+}
+
+impl fmt::Display for CellRow {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut output = String::new();
+
+        for cell in &self.cells {
+            write!(&mut output, "{}", &cell).unwrap();
+        }
+
+        write!(f, "{}", output)
     }
 }
 
@@ -35,7 +42,6 @@ impl CellRow {
         Self { cells }
     }
 
-    /// It's just an alias for readability
     pub fn with(cells: Vec<Cell>) -> Self {
         Self::new(cells)
     }
@@ -71,7 +77,7 @@ impl CellRow {
 
 #[cfg(test)]
 mod tests {
-    use crate::cell::Cell;
+    use crate::cell::{c, Cell};
 
     use super::CellRow;
 
@@ -101,9 +107,38 @@ mod tests {
 
     #[test]
     fn it_can_validate_if_a_given_position_is_valid_in_the_row_starting_at_zero() {
+        // Valid positions
         assert!(CellRow::of_dead_cells(10).position_is_valid(0));
         assert!(CellRow::of_dead_cells(10).position_is_valid(9));
 
+        // Invalid positions
         assert!(!CellRow::of_dead_cells(1).position_is_valid(10));
+    }
+
+    #[test]
+    fn it_should_be_displayed() {
+        assert_eq!(
+            format!("{}", CellRow::new(vec![c('⬜'), c('⬛'), c('⬛')])),
+            "⬜⬛⬛"
+        );
+    }
+
+    #[test]
+    fn it_should_be_generated_from_a_string() {
+        assert_eq!(
+            "⬛⬜".parse::<CellRow>().unwrap(),
+            CellRow::new(vec![c('⬛'), c('⬜')])
+        );
+    }
+
+    #[test]
+    fn it_should_fail_trying_to_generate_it_from_an_invalid_string() {
+        assert!("X".parse::<CellRow>().is_err());
+    }
+
+    #[test]
+    fn given_it_fails_to_generate_the_cell_row_from_a_string_it_should_show_the_invalid_char_in_the_error(
+    ) {
+        assert_eq!("X".parse::<CellRow>().unwrap_err().invalid_char, 'X');
     }
 }

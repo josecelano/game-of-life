@@ -29,8 +29,6 @@ mod tests {
     fn it_should_render_an_empty_grid() {
         let grid = Grid::default();
 
-        println!("{}", &grid);
-
         assert_eq!(display_grid(&grid), "");
     }
 
