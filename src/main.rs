@@ -1,3 +1,6 @@
+pub mod cell;
+pub mod grid;
+
 use core::time::Duration;
 use game_of_life::game::play;
 

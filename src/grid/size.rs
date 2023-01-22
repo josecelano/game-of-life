@@ -1,10 +1,10 @@
 #[derive(Debug, PartialEq)]
-pub struct GridSize {
+pub struct Size {
     pub rows: usize,
     pub columns: usize,
 }
 
-impl GridSize {
+impl Size {
     pub fn new(rows: usize, columns: usize) -> Self {
         Self { rows, columns }
     }
@@ -16,11 +16,11 @@ impl GridSize {
 
 #[cfg(test)]
 mod should {
-    use super::GridSize;
+    use super::Size;
 
     #[test]
     fn have_rows_and_columns() {
-        let grid_size = GridSize {
+        let grid_size = Size {
             rows: 1,
             columns: 2,
         };
@@ -31,7 +31,7 @@ mod should {
 
     #[test]
     fn return_the_number_of_cells() {
-        let grid_size = GridSize {
+        let grid_size = Size {
             rows: 3,
             columns: 4,
         };

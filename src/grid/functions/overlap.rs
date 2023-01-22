@@ -1,4 +1,7 @@
-use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid};
+use crate::{
+    cell::{coordinates::Coordinates, row::Row, Cell},
+    grid::Grid,
+};
 
 /// It overlaps a grid on top of another grid at a given cell position,
 /// returning a new grid. It uses the left top corner of the front grid
@@ -37,7 +40,7 @@ use crate::{cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, gr
 /// 3⬛⬛⬜⬜⬜
 /// 4⬛⬛⬜⬜⬜
 /// ```
-pub fn overlap(back_grid: &Grid, front_grid: &Grid, front_grid_position: &CellCoordinates) -> Grid {
+pub fn overlap(back_grid: &Grid, front_grid: &Grid, front_grid_position: &Coordinates) -> Grid {
     if back_grid.is_empty() {
         return Grid::new_empty();
     }
@@ -71,7 +74,7 @@ pub fn overlap(back_grid: &Grid, front_grid: &Grid, front_grid_position: &CellCo
 fn perfect_overlapping(
     back_grid: &Grid,
     front_grid: &Grid,
-    front_grid_position: &CellCoordinates,
+    front_grid_position: &Coordinates,
 ) -> bool {
     back_grid.has_same_dimensions(front_grid) && front_grid_position.is_left_top_corner()
 }
@@ -79,16 +82,16 @@ fn perfect_overlapping(
 /// Right bottom corner coordinates for the front grid using back grid coordinates origin
 fn front_grid_right_bottom_corner_coordinates(
     front_grid: &Grid,
-    front_grid_position: &CellCoordinates,
-) -> CellCoordinates {
+    front_grid_position: &Coordinates,
+) -> Coordinates {
     front_grid_position.translate(front_grid.rows() - 1, front_grid.columns() - 1)
 }
 
 fn calculate_new_rows(
     back_grid: &Grid,
     front_grid: &Grid,
-    front_grid_position: &CellCoordinates,
-) -> Vec<CellRow> {
+    front_grid_position: &Coordinates,
+) -> Vec<Row> {
     let mut cell_rows = vec![];
 
     for row in 0..back_grid.rows() {
@@ -107,25 +110,25 @@ fn calculate_new_row(
     row: usize,
     back_grid: &Grid,
     front_grid: &Grid,
-    front_grid_position: &CellCoordinates,
-) -> CellRow {
+    front_grid_position: &Coordinates,
+) -> Row {
     let mut cells = vec![];
     for column in 0..back_grid.columns() {
         cells.push(calculate_new_cell(
-            CellCoordinates::new(row, column),
+            Coordinates::new(row, column),
             back_grid,
             front_grid,
             front_grid_position,
         ));
     }
-    CellRow::with(cells)
+    Row::with(cells)
 }
 
 fn calculate_new_cell(
-    cell_coordinates: CellCoordinates,
+    cell_coordinates: Coordinates,
     back_grid: &Grid,
     front_grid: &Grid,
-    front_grid_position: &CellCoordinates,
+    front_grid_position: &Coordinates,
 ) -> Cell {
     match overlapped_cell(&cell_coordinates, front_grid, front_grid_position) {
         None => back_grid.get_cell(&cell_coordinates).clone(),
@@ -134,10 +137,10 @@ fn calculate_new_cell(
 }
 
 fn overlapped_cell(
-    cell_coordinates: &CellCoordinates,
+    cell_coordinates: &Coordinates,
     front_grid: &Grid,
-    front_grid_position: &CellCoordinates,
-) -> Option<CellCoordinates> {
+    front_grid_position: &Coordinates,
+) -> Option<Coordinates> {
     if !is_overlapped_cell(cell_coordinates, front_grid, front_grid_position) {
         return None;
     }
@@ -151,9 +154,9 @@ fn overlapped_cell(
 /// Return true is at the current back grid cell coordinates
 /// there is also a cell in the front grid
 fn is_overlapped_cell(
-    cell_coordinates: &CellCoordinates,
+    cell_coordinates: &Coordinates,
     front_grid: &Grid,
-    front_grid_position: &CellCoordinates,
+    front_grid_position: &Coordinates,
 ) -> bool {
     cell_coordinates.row >= front_grid_position.row
         && cell_coordinates.column >= front_grid_position.column
@@ -162,15 +165,15 @@ fn is_overlapped_cell(
 }
 
 fn relative_front_grid_cell_coordinates(
-    cell_coordinates: &CellCoordinates,
-    front_grid_position: &CellCoordinates,
-) -> CellCoordinates {
+    cell_coordinates: &Coordinates,
+    front_grid_position: &Coordinates,
+) -> Coordinates {
     cell_coordinates.recalculate_to_origin(front_grid_position)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::{cell_coordinates::CellCoordinates, grid::Grid, grid_functions::overlap::overlap};
+    use crate::{cell::coordinates::Coordinates, grid::functions::overlap::overlap, grid::Grid};
 
     #[test]
     #[should_panic]
@@ -179,10 +182,10 @@ mod tests {
         let front_grid = Grid::of_live_cells(5, 5);
 
         // Row out of range
-        overlap(&back_grid, &front_grid, &CellCoordinates::new(6, 2));
+        overlap(&back_grid, &front_grid, &Coordinates::new(6, 2));
 
         // Column out of range
-        overlap(&back_grid, &front_grid, &CellCoordinates::new(5, 6));
+        overlap(&back_grid, &front_grid, &Coordinates::new(5, 6));
     }
 
     #[test]
@@ -193,7 +196,7 @@ mod tests {
         let front_grid = Grid::of_dead_cells(2, 2);
 
         // Second row of front grid does not fit
-        overlap(&back_grid, &front_grid, &CellCoordinates::new(1, 0));
+        overlap(&back_grid, &front_grid, &Coordinates::new(1, 0));
     }
 
     #[test]
@@ -204,17 +207,18 @@ mod tests {
         let front_grid = Grid::of_dead_cells(2, 2);
 
         // Second columns of the front gird does not fit
-        overlap(&back_grid, &front_grid, &CellCoordinates::new(0, 1));
+        overlap(&back_grid, &front_grid, &Coordinates::new(0, 1));
     }
 
     mod overlapping_on_the_left_top_corner {
         use crate::{
-            cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid,
-            grid_functions::overlap::overlap,
+            cell::{coordinates::Coordinates, row::Row, Cell},
+            grid::functions::overlap::overlap,
+            grid::Grid,
         };
 
-        fn left_top_corner() -> CellCoordinates {
-            CellCoordinates::new(0, 0)
+        fn left_top_corner() -> Coordinates {
+            Coordinates::new(0, 0)
         }
 
         #[test]
@@ -253,21 +257,21 @@ mod tests {
         #[test]
         fn smaller_grid_into_a_bigger_one() {
             let back_grid = Grid::new(vec![
-                CellRow::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
-                CellRow::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
-                CellRow::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
+                Row::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
+                Row::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
+                Row::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
             ]);
             let front_grid = Grid::new(vec![
-                CellRow::new(vec![Cell::live(), Cell::live()]),
-                CellRow::new(vec![Cell::live(), Cell::live()]),
+                Row::new(vec![Cell::live(), Cell::live()]),
+                Row::new(vec![Cell::live(), Cell::live()]),
             ]);
 
             assert_eq!(
                 overlap(&back_grid, &front_grid, &left_top_corner()),
                 Grid::new(vec![
-                    CellRow::new(vec![Cell::live(), Cell::live(), Cell::dead()]),
-                    CellRow::new(vec![Cell::live(), Cell::live(), Cell::dead()]),
-                    CellRow::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
+                    Row::new(vec![Cell::live(), Cell::live(), Cell::dead()]),
+                    Row::new(vec![Cell::live(), Cell::live(), Cell::dead()]),
+                    Row::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
                 ])
             );
         }
@@ -275,8 +279,9 @@ mod tests {
 
     mod overlapping_not_on_the_left_top_corner {
         use crate::{
-            cell::c, cell_coordinates::CellCoordinates, cell_row::CellRow, grid::Grid,
-            grid_functions::overlap::overlap,
+            cell::{c, coordinates::Coordinates, row::Row},
+            grid::functions::overlap::overlap,
+            grid::Grid,
         };
 
         #[test]
@@ -285,14 +290,14 @@ mod tests {
             let front_grid = Grid::of_live_cells(3, 3);
 
             assert_eq!(
-                overlap(&back_grid, &front_grid, &CellCoordinates::new(2, 2)),
+                overlap(&back_grid, &front_grid, &Coordinates::new(2, 2)),
                 Grid::new(vec![
                     //                   0        1        2        3         4
-                    CellRow::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛'),]), // 0
-                    CellRow::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛'),]), // 1
-                    CellRow::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 2
-                    CellRow::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 3
-                    CellRow::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 4
+                    Row::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛'),]), // 0
+                    Row::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛'),]), // 1
+                    Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 2
+                    Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 3
+                    Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 4
                 ])
             );
         }

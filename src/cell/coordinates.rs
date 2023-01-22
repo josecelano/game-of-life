@@ -1,10 +1,10 @@
 #[derive(Debug, PartialEq, Clone, Copy)]
-pub struct CellCoordinates {
+pub struct Coordinates {
     pub row: usize,
     pub column: usize,
 }
 
-impl CellCoordinates {
+impl Coordinates {
     pub fn new(row: usize, column: usize) -> Self {
         Self { row, column }
     }
@@ -21,10 +21,10 @@ impl CellCoordinates {
         self.column == 0
     }
 
-    pub fn recalculate_to_origin(&self, new_origin: &CellCoordinates) -> Self {
+    pub fn recalculate_to_origin(&self, new_origin: &Coordinates) -> Self {
         let front_grid_row = self.row - new_origin.row;
         let front_grid_column = self.column - new_origin.column;
-        CellCoordinates::new(front_grid_row, front_grid_column)
+        Coordinates::new(front_grid_row, front_grid_column)
     }
 
     pub fn translate(&self, rows: usize, columns: usize) -> Self {
@@ -34,12 +34,11 @@ impl CellCoordinates {
 
 #[cfg(test)]
 mod tests {
-
-    use crate::cell_coordinates::CellCoordinates;
+    use crate::cell::coordinates::Coordinates;
 
     #[test]
     fn cell_coordinates_contain_a_row_and_column() {
-        let pos = CellCoordinates::new(0, 0);
+        let pos = Coordinates::new(0, 0);
 
         assert_eq!(pos.row, 0);
         assert_eq!(pos.column, 0);
@@ -47,7 +46,7 @@ mod tests {
 
     #[test]
     fn cell_coordinates_at_row_0_and_column_0_represent_the_left_top_corner_of_a_grid() {
-        assert!(CellCoordinates::new(0, 0).is_left_top_corner());
+        assert!(Coordinates::new(0, 0).is_left_top_corner());
     }
 
     #[test]
@@ -71,24 +70,24 @@ mod tests {
           - If we move the origin to (1,1) the new coordinates for c are (1,1)
         */
 
-        let cell_coordinates = CellCoordinates::new(2, 2);
+        let cell_coordinates = Coordinates::new(2, 2);
 
         assert_eq!(
-            cell_coordinates.recalculate_to_origin(&CellCoordinates::new(2, 2)),
-            CellCoordinates::new(0, 0)
+            cell_coordinates.recalculate_to_origin(&Coordinates::new(2, 2)),
+            Coordinates::new(0, 0)
         );
 
         assert_eq!(
-            cell_coordinates.recalculate_to_origin(&CellCoordinates::new(1, 1)),
-            CellCoordinates::new(1, 1)
+            cell_coordinates.recalculate_to_origin(&Coordinates::new(1, 1)),
+            Coordinates::new(1, 1)
         );
     }
 
     #[test]
     fn cell_coordinates_can_be_translate_some_rows_or_columns() {
         assert_eq!(
-            CellCoordinates::new(0, 0).translate(1, 1),
-            CellCoordinates::new(1, 1)
+            Coordinates::new(0, 0).translate(1, 1),
+            Coordinates::new(1, 1)
         );
     }
 }

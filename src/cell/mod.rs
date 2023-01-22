@@ -1,14 +1,19 @@
+pub mod coordinates;
+pub mod row;
+pub mod state;
+
+use crate::cell::state::State;
 use std::fmt;
 
-use crate::cell_state::{CellState, ParseCellStateFromCharError};
+use self::state::ParseCellStateFromCharError;
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Cell {
-    state: CellState,
+    state: State,
 }
 
 pub fn c(state: char) -> Cell {
-    match CellState::try_from(state) {
+    match State::try_from(state) {
         Ok(state) => Cell::new(state),
         Err(_) => panic!("Invalid char representation for cell {}", state),
     }
@@ -18,7 +23,7 @@ impl TryFrom<char> for Cell {
     type Error = ParseCellStateFromCharError;
 
     fn try_from(state: char) -> Result<Self, Self::Error> {
-        match CellState::try_from(state) {
+        match State::try_from(state) {
             Ok(state) => Ok(Cell::new(state)),
             Err(error) => Err(error),
         }
@@ -33,26 +38,26 @@ impl fmt::Display for Cell {
 
 impl Cell {
     pub fn live() -> Self {
-        Self::new(CellState::Live)
+        Self::new(State::Live)
     }
 
     pub fn dead() -> Self {
-        Self::new(CellState::Dead)
+        Self::new(State::Dead)
     }
 
-    fn new(state: CellState) -> Self {
+    fn new(state: State) -> Self {
         Self { state }
     }
 
     pub fn is_live(&self) -> bool {
-        self.state == CellState::Live
+        self.state == State::Live
     }
 
     pub fn is_dead(&self) -> bool {
-        self.state == CellState::Dead
+        self.state == State::Dead
     }
 
-    pub fn state(&self) -> CellState {
+    pub fn state(&self) -> State {
         self.state.to_owned()
     }
 }
@@ -60,9 +65,10 @@ impl Cell {
 #[cfg(test)]
 mod tests {
 
-    use crate::{
-        cell::{c, Cell, CellState},
-        cell_state::{DEAD, LIVE},
+    use crate::cell::{
+        c,
+        state::{DEAD, LIVE},
+        Cell, State,
     };
 
     #[test]
@@ -81,8 +87,8 @@ mod tests {
 
     #[test]
     fn a_cell_can_be_created_using_its_state() {
-        assert!(Cell::new(CellState::Live).is_live());
-        assert!(Cell::new(CellState::Dead).is_dead());
+        assert!(Cell::new(State::Live).is_live());
+        assert!(Cell::new(State::Dead).is_dead());
     }
 
     #[test]

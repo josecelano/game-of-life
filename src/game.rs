@@ -1,10 +1,10 @@
+use crate::cell::coordinates::Coordinates;
 use std::{thread, time::Duration};
 
 use crate::{
-    cell_coordinates::CellCoordinates,
+    grid::functions::{next_generation::next_generation, overlap::overlap},
+    grid::patters::glider::glider,
     grid::Grid,
-    grid_functions::{next_generation::next_generation, overlap::overlap},
-    patters::glider::glider,
 };
 
 fn clear_screen() {
@@ -19,7 +19,7 @@ pub fn play(generations: i64, generation_duration: Duration) -> String {
 
     let pattern = glider();
 
-    let mut grid = overlap(&back_grid, &pattern, &CellCoordinates::new(13, 29));
+    let mut grid = overlap(&back_grid, &pattern, &Coordinates::new(13, 29));
 
     let mut output = "".to_string();
 
