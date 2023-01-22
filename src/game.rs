@@ -3,7 +3,7 @@ use std::{thread, time::Duration};
 
 use crate::{
     grid::functions::{next_generation::next_generation, overlap::overlap},
-    grid::patters::glider::glider,
+    grid::patterns::glider::glider,
     grid::Grid,
 };
 

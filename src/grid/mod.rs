@@ -1,5 +1,5 @@
 pub mod functions;
-pub mod patters;
+pub mod patterns;
 pub mod size;
 pub mod traverser;
 
