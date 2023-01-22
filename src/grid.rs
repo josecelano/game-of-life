@@ -1,3 +1,4 @@
+use std::fmt;
 use std::str::FromStr;
 
 use crate::cell_state::CellState;
@@ -5,6 +6,7 @@ use crate::{
     cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid_size::GridSize,
     grid_traverser::GridTraverser,
 };
+use std::fmt::Write;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Grid {
@@ -113,6 +115,23 @@ impl FromStr for Grid {
 
         Ok(Grid::new(cell_rows))
     }
+}
+
+impl fmt::Display for Grid {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", display(self))
+    }
+}
+
+fn display(grid: &Grid) -> String {
+    let mut output = String::new();
+
+    for cell_row in &grid.cell_rows {
+        write!(&mut output, "{}", cell_row).unwrap();
+        writeln!(&mut output).unwrap();
+    }
+
+    output.to_string()
 }
 
 impl Grid {
@@ -682,37 +701,77 @@ mod tests {
         );
     }
 
-    #[test]
-    fn it_should_be_converted_from_a_string() {
-        // Case: empty
-        let grid: Grid = "".parse().unwrap();
-        assert_eq!(grid, Grid::new_empty());
+    mod for_displaying {
+        use crate::{cell::Cell, cell_row::CellRow, grid::Grid};
 
-        // Case: one life cell
-        let grid: Grid = "⬜".parse().unwrap();
-        assert_eq!(grid, Grid::new(vec![CellRow::new(vec![c('⬜')])]));
+        #[test]
+        fn it_should_render_an_empty_grid() {
+            let grid = Grid::default();
 
-        // Case: one dead cell
-        let grid: Grid = "⬛".parse().unwrap();
-        assert_eq!(grid, Grid::new(vec![CellRow::new(vec![c('⬛')])]));
+            assert_eq!(grid.to_string(), "");
+        }
 
-        // Case: 3x3
-        let grid: Grid = "
-        ⬜⬜⬜
-        ⬜⬛⬜
-        ⬜⬜⬜
-        "
-        .parse()
-        .unwrap();
-        assert_eq!(
-            grid,
-            Grid::new(vec![
-                CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-                CellRow::new(vec![c('⬜'), c('⬛'), c('⬜')]),
-                CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            ])
-        );
+        #[test]
+        fn it_should_render_a_grid_with_only_one_live_cell() {
+            let grid = Grid::new(vec![CellRow::new(vec![Cell::live()])]);
 
-        // todo: parse error cases
+            assert_eq!(grid.to_string(), "⬜\n");
+        }
+
+        #[test]
+        fn it_should_render_a_grid_with_only_one_dead_cell() {
+            let grid = Grid::new(vec![CellRow::new(vec![Cell::dead()])]);
+
+            assert_eq!(grid.to_string(), "⬛\n");
+        }
+
+        #[test]
+        fn it_should_render_a_3x3_grid() {
+            let grid = Grid::new(vec![
+                CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+                CellRow::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
+                CellRow::new(vec![Cell::live(), Cell::live(), Cell::live()]),
+            ]);
+
+            assert_eq!(grid.to_string(), "⬜⬜⬜\n⬛⬛⬛\n⬜⬜⬜\n");
+        }
+    }
+
+    mod for_instantiate_from_string {
+        use crate::{cell::c, cell_row::CellRow, grid::Grid};
+
+        #[test]
+        fn it_should_be_converted_from_a_string() {
+            // Case: empty
+            let grid: Grid = "".parse().unwrap();
+            assert_eq!(grid, Grid::new_empty());
+
+            // Case: one life cell
+            let grid: Grid = "⬜".parse().unwrap();
+            assert_eq!(grid, Grid::new(vec![CellRow::new(vec![c('⬜')])]));
+
+            // Case: one dead cell
+            let grid: Grid = "⬛".parse().unwrap();
+            assert_eq!(grid, Grid::new(vec![CellRow::new(vec![c('⬛')])]));
+
+            // Case: 3x3
+            let grid: Grid = "
+            ⬜⬜⬜
+            ⬜⬛⬜
+            ⬜⬜⬜
+            "
+            .parse()
+            .unwrap();
+            assert_eq!(
+                grid,
+                Grid::new(vec![
+                    CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+                    CellRow::new(vec![c('⬜'), c('⬛'), c('⬜')]),
+                    CellRow::new(vec![c('⬜'), c('⬜'), c('⬜')]),
+                ])
+            );
+
+            // todo: parse error cases
+        }
     }
 }
