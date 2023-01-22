@@ -1,8 +1,9 @@
 /// Calculate the next generation of cells for the grid
 use crate::{
-    cell::{Cell, CellState},
+    cell::Cell,
     cell_coordinates::CellCoordinates,
     cell_row::CellRow,
+    cell_state::CellState,
     grid::{CellInfo, Grid},
 };
 

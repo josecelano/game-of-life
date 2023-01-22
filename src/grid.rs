@@ -1,6 +1,6 @@
 use std::str::FromStr;
 
-use crate::cell::CellState;
+use crate::cell_state::CellState;
 use crate::{
     cell::Cell, cell_coordinates::CellCoordinates, cell_row::CellRow, grid_size::GridSize,
     grid_traverser::GridTraverser,
@@ -275,9 +275,10 @@ impl Grid {
 #[cfg(test)]
 mod tests {
     use crate::{
-        cell::{c, Cell, CellState},
+        cell::{c, Cell},
         cell_coordinates::CellCoordinates,
         cell_row::CellRow,
+        cell_state::CellState,
         grid::{CellInfo, Grid},
         grid_size::GridSize,
     };

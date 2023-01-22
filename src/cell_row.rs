@@ -19,7 +19,11 @@ impl FromStr for CellRow {
         let mut cells_row = vec![];
 
         for c in text.trim().chars() {
-            cells_row.push(Cell::from(c));
+            match Cell::try_from(c) {
+                Ok(cell) => cells_row.push(cell),
+                // todo: return the invalid char in the error message
+                Err(_) => return Err(ParseCellRowError),
+            };
         }
 
         Ok(CellRow::new(cells_row))
@@ -96,7 +100,7 @@ mod tests {
     }
 
     #[test]
-    fn it_can_validate_if_the_row_contains_a_given_position_starting_at_zero() {
+    fn it_can_validate_if_a_given_position_is_valid_in_the_row_starting_at_zero() {
         assert!(CellRow::of_dead_cells(10).position_is_valid(0));
         assert!(CellRow::of_dead_cells(10).position_is_valid(9));
 

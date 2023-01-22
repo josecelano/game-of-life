@@ -1,6 +1,7 @@
 pub mod cell;
 pub mod cell_coordinates;
 pub mod cell_row;
+pub mod cell_state;
 pub mod game;
 pub mod grid;
 pub mod grid_functions;
