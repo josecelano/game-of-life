@@ -44,9 +44,10 @@ fn new_cell_applying_rule_b3_s23(cell_info: &CellInfo) -> Cell {
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use crate::{
-        cell::{c, coordinates::Coordinates, row::Row},
-        grid::functions::next_generation::next_generation,
+        cell::coordinates::Coordinates, grid::functions::next_generation::next_generation,
         grid::Grid,
     };
 
@@ -59,21 +60,23 @@ mod tests {
 
     #[test]
     fn any_live_cell_with_fewer_than_two_live_neighbours_dies() {
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬛⬛⬛
+             ⬛⬜⬛
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert!(next_generation(&grid)
             .get_cell(&Coordinates::new(1, 1))
             .is_dead());
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬛⬜⬛
+             ⬛⬜⬛
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert!(next_generation(&grid)
             .get_cell(&Coordinates::new(1, 1))
@@ -82,21 +85,23 @@ mod tests {
 
     #[test]
     fn any_live_cell_with_two_or_three_live_neighbours_survives() {
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬛⬛⬛
+             ⬜⬜⬜
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert!(next_generation(&grid)
             .get_cell(&Coordinates::new(1, 1))
             .is_live());
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬛⬜⬛
+             ⬜⬜⬜
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert!(next_generation(&grid)
             .get_cell(&Coordinates::new(1, 1))
@@ -105,21 +110,23 @@ mod tests {
 
     #[test]
     fn any_live_cell_with_more_than_three_live_neighbours_dies() {
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬛⬜⬛
+             ⬜⬜⬜
+             ⬛⬜⬛",
+        )
+        .unwrap();
 
         assert!(next_generation(&grid)
             .get_cell(&Coordinates::new(1, 1))
             .is_dead());
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬜⬜
+             ⬜⬜⬜",
+        )
+        .unwrap();
 
         assert!(next_generation(&grid)
             .get_cell(&Coordinates::new(1, 1))
@@ -128,21 +135,23 @@ mod tests {
 
     #[test]
     fn any_dead_cell_with_exactly_three_live_neighbours_becomes_a_live_cell() {
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬜'), c('⬛'), c('⬜')]),
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬛⬛⬛
+             ⬜⬛⬜
+             ⬛⬜⬛",
+        )
+        .unwrap();
 
         assert!(next_generation(&grid)
             .get_cell(&Coordinates::new(1, 1))
             .is_live());
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-            Row::new(vec![c('⬜'), c('⬛'), c('⬜')]),
-            Row::new(vec![c('⬛'), c('⬜'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬛⬜⬛
+             ⬜⬛⬜
+             ⬛⬜⬛",
+        )
+        .unwrap();
 
         assert!(next_generation(&grid)
             .get_cell(&Coordinates::new(1, 1))
@@ -151,17 +160,19 @@ mod tests {
 
     #[test]
     fn grid_edges_are_stitched_together() {
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬜'), c('⬜'), c('⬜'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬛⬛⬛⬛⬛
+             ⬛⬛⬛⬛⬛
+             ⬛⬜⬜⬜⬛",
+        )
+        .unwrap();
 
-        let expected_grid = Grid::new(vec![
-            Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬛'), c('⬛')]),
-        ]);
+        let expected_grid = Grid::from_str(
+            "⬛⬛⬜⬛⬛
+             ⬛⬛⬜⬛⬛
+             ⬛⬛⬜⬛⬛",
+        )
+        .unwrap();
 
         let actual_grid = next_generation(&grid);
 

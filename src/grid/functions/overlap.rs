@@ -211,10 +211,10 @@ mod tests {
     }
 
     mod overlapping_on_the_left_top_corner {
+        use std::str::FromStr;
+
         use crate::{
-            cell::{coordinates::Coordinates, row::Row, Cell},
-            grid::functions::overlap::overlap,
-            grid::Grid,
+            cell::coordinates::Coordinates, grid::functions::overlap::overlap, grid::Grid,
         };
 
         fn left_top_corner() -> Coordinates {
@@ -256,32 +256,36 @@ mod tests {
 
         #[test]
         fn smaller_grid_into_a_bigger_one() {
-            let back_grid = Grid::new(vec![
-                Row::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
-                Row::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
-                Row::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
-            ]);
-            let front_grid = Grid::new(vec![
-                Row::new(vec![Cell::live(), Cell::live()]),
-                Row::new(vec![Cell::live(), Cell::live()]),
-            ]);
+            let back_grid = Grid::from_str(
+                "⬛⬛⬛
+                 ⬛⬛⬛
+                 ⬛⬛⬛",
+            )
+            .unwrap();
+
+            let front_grid = Grid::from_str(
+                "⬜⬜
+                 ⬜⬜",
+            )
+            .unwrap();
 
             assert_eq!(
                 overlap(&back_grid, &front_grid, &left_top_corner()),
-                Grid::new(vec![
-                    Row::new(vec![Cell::live(), Cell::live(), Cell::dead()]),
-                    Row::new(vec![Cell::live(), Cell::live(), Cell::dead()]),
-                    Row::new(vec![Cell::dead(), Cell::dead(), Cell::dead()]),
-                ])
+                Grid::from_str(
+                    "⬜⬜⬛
+                     ⬜⬜⬛
+                     ⬛⬛⬛",
+                )
+                .unwrap()
             );
         }
     }
 
     mod overlapping_not_on_the_left_top_corner {
+        use std::str::FromStr;
+
         use crate::{
-            cell::{c, coordinates::Coordinates, row::Row},
-            grid::functions::overlap::overlap,
-            grid::Grid,
+            cell::coordinates::Coordinates, grid::functions::overlap::overlap, grid::Grid,
         };
 
         #[test]
@@ -291,14 +295,14 @@ mod tests {
 
             assert_eq!(
                 overlap(&back_grid, &front_grid, &Coordinates::new(2, 2)),
-                Grid::new(vec![
-                    //                   0        1        2        3         4
-                    Row::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛'),]), // 0
-                    Row::new(vec![c('⬛'), c('⬛'), c('⬛'), c('⬛'), c('⬛'),]), // 1
-                    Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 2
-                    Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 3
-                    Row::new(vec![c('⬛'), c('⬛'), c('⬜'), c('⬜'), c('⬜'),]), // 4
-                ])
+                Grid::from_str(
+                    "⬛⬛⬛⬛⬛
+                     ⬛⬛⬛⬛⬛
+                     ⬛⬛⬜⬜⬜
+                     ⬛⬛⬜⬜⬜
+                     ⬛⬛⬜⬜⬜",
+                )
+                .unwrap()
             );
         }
     }

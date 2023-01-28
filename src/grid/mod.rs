@@ -301,8 +301,10 @@ impl Grid {
 
 #[cfg(test)]
 mod tests {
+    use std::str::FromStr;
+
     use crate::{
-        cell::{c, coordinates::Coordinates, row::Row, state::State, Cell},
+        cell::{coordinates::Coordinates, row::Row, state::State, Cell},
         grid::{size::Size, CellInfo, Grid},
     };
 
@@ -331,10 +333,11 @@ mod tests {
 
     #[test]
     fn a_2x3_grid_contains_two_cell_rows_with_three_columns() {
-        let grid = Grid::new(vec![
-            Row::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-            Row::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬜⬜",
+        )
+        .unwrap();
 
         assert_eq!(grid.rows(), 2);
         assert_eq!(grid.columns(), 3);
@@ -362,24 +365,25 @@ mod tests {
 
     #[test]
     fn a_2x3_grid_contains_six_cells() {
-        let grid = Grid::new(vec![
-            Row::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-            Row::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬜⬜",
+        )
+        .unwrap();
 
         assert_eq!(grid.number_of_cells(), 6);
     }
 
     #[test]
     fn a_grid_can_be_empty_if_it_does_not_contain_any_cell() {
-        let grid = Grid::new(vec![]);
+        let grid = Grid::from_str("").unwrap();
 
         assert!(grid.is_empty());
     }
 
     #[test]
     fn a_cell_in_a_1x1_grid_does_not_have_any_live_neighbors() {
-        let grid = Grid::new(vec![Row::new(vec![Cell::live()])]);
+        let grid = Grid::from_str("⬜").unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(0, 0)),
@@ -389,11 +393,12 @@ mod tests {
 
     #[test]
     fn a_cell_in_the_center_of_a_3x3_grid_can_have_eight_live_neighbors() {
-        let grid = Grid::new(vec![
-            Row::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-            Row::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-            Row::new(vec![Cell::live(), Cell::live(), Cell::live()]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬜⬜
+             ⬜⬜⬜",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
@@ -402,48 +407,54 @@ mod tests {
     }
 
     mod the_edges_are_stitched_together {
+        use std::str::FromStr;
+
         use crate::{
-            cell::{c, coordinates::Coordinates, row::Row},
+            cell::coordinates::Coordinates,
             grid::{Grid, Neighbor},
         };
 
         #[test]
         fn no_left_top_neighbor_case() {
             // Case 1: left top corner
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬜')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬛
+                 ⬛⬛⬛
+                 ⬛⬛⬜",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(0, 0), &Neighbor::LetTop)
             .is_live());
 
             // Case 2: top row
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬛
+                 ⬛⬛⬛
+                 ⬜⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(0, 1), &Neighbor::LetTop)
             .is_live());
 
             // Case 3: left column
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬜')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬜
+                 ⬛⬛⬛
+                 ⬛⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(1, 0), &Neighbor::LetTop)
             .is_live());
         }
 
         #[test]
         fn no_top_neighbor_case() {
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛')]),
-                Row::new(vec![c('⬛')]),
-                Row::new(vec![c('⬜')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛
+                 ⬛
+                 ⬜",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(0, 0), &Neighbor::Top)
             .is_live());
         }
@@ -451,43 +462,48 @@ mod tests {
         #[test]
         fn no_right_top_neighbor_case() {
             // Case 1: right top corner
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬛
+                 ⬛⬛⬛
+                 ⬜⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(0, 2), &Neighbor::RightTop)
             .is_live());
 
             // Case 2: top row
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬜')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬛
+                 ⬛⬛⬛
+                 ⬛⬛⬜",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(0, 1), &Neighbor::RightTop)
             .is_live());
 
             // Case 3: right column
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬜⬛⬛
+                 ⬛⬛⬛
+                 ⬛⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(1, 2), &Neighbor::RightTop)
             .is_live());
         }
 
         #[test]
         fn no_left_neighbor_case() {
-            assert!(Grid::new(vec![Row::new(vec![c('⬛'), c('⬛'), c('⬜')]),])
+            assert!(Grid::from_str("⬛⬛⬜",)
+                .unwrap()
                 .get_neighbor(&Coordinates::new(0, 0), &Neighbor::Left)
                 .is_live());
         }
 
         #[test]
         fn no_right_neighbor_case() {
-            assert!(Grid::new(vec![Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),])
+            assert!(Grid::from_str("⬜⬛⬛",)
+                .unwrap()
                 .get_neighbor(&Coordinates::new(0, 2), &Neighbor::Right)
                 .is_live());
         }
@@ -495,40 +511,44 @@ mod tests {
         #[test]
         fn no_left_bottom_neighbor_case() {
             // Case 1: left bottom corner
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬜')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬜
+                 ⬛⬛⬛
+                 ⬛⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(2, 0), &Neighbor::LeftBottom)
             .is_live());
 
             // Case 2: bottom row
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬜⬛⬛
+                 ⬛⬛⬛
+                 ⬛⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(2, 1), &Neighbor::LeftBottom)
             .is_live());
 
             // Case 3: left column
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬜')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬛
+                 ⬛⬛⬛
+                 ⬛⬛⬜",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(1, 0), &Neighbor::LeftBottom)
             .is_live());
         }
 
         #[test]
         fn no_bottom_neighbor_case() {
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬜')]),
-                Row::new(vec![c('⬛')]),
-                Row::new(vec![c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬜
+                 ⬛
+                 ⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(2, 0), &Neighbor::Bottom)
             .is_live());
         }
@@ -536,29 +556,32 @@ mod tests {
         #[test]
         fn no_right_bottom_neighbor_case() {
             // Case 1: right bottom corner
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬜⬛⬛
+                 ⬛⬛⬛
+                 ⬛⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(2, 2), &Neighbor::RightBottom)
             .is_live());
 
             // Case 2: bottom row
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬜')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬜
+                 ⬛⬛⬛
+                 ⬛⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(2, 1), &Neighbor::RightBottom)
             .is_live());
 
             // Case 3: right column
-            assert!(Grid::new(vec![
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-                Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-            ])
+            assert!(Grid::from_str(
+                "⬛⬛⬛
+                 ⬛⬛⬛
+                 ⬜⬛⬛",
+            )
+            .unwrap()
             .get_neighbor(&Coordinates::new(1, 2), &Neighbor::RightBottom)
             .is_live());
         }
@@ -566,88 +589,96 @@ mod tests {
 
     #[test]
     fn it_should_calculate_the_number_of_live_neighbors() {
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬛⬛
+             ⬛⬛⬛
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
             1
         );
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬜'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬛
+             ⬛⬛⬛
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
             2
         );
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬛⬛⬛
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
             3
         );
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬛⬛
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
             4
         );
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬛'), c('⬜')]),
-            Row::new(vec![c('⬛'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬛⬜
+             ⬛⬛⬛",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
             5
         );
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬛'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬛'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬛⬜
+             ⬜⬛⬛",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
             6
         );
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬛'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬜'), c('⬛')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬛⬜
+             ⬜⬜⬛",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
             7
         );
 
-        let grid = Grid::new(vec![
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬛'), c('⬜')]),
-            Row::new(vec![c('⬜'), c('⬜'), c('⬜')]),
-        ]);
+        let grid = Grid::from_str(
+            "⬜⬜⬜
+             ⬜⬛⬜
+             ⬜⬜⬜",
+        )
+        .unwrap();
 
         assert_eq!(
             grid.number_of_live_neighbors_for(&Coordinates::new(1, 1)),
@@ -738,7 +769,7 @@ mod tests {
         }
     }
 
-    mod for_instantiate_from_string {
+    mod for_instantiation_from_string {
         use crate::{
             cell::{c, row::Row},
             grid::Grid,
