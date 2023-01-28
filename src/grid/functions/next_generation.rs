@@ -4,6 +4,7 @@ use crate::{
     grid::{CellInfo, Grid},
 };
 
+#[must_use]
 pub fn next_generation(grid: &Grid) -> Grid {
     let mut cell_rows = vec![];
 
@@ -14,7 +15,7 @@ pub fn next_generation(grid: &Grid) -> Grid {
                 &grid.get_cell_info(&Coordinates::new(row, column)),
             ));
         }
-        cell_rows.push(Row::new(cells_row))
+        cell_rows.push(Row::new(cells_row));
     }
 
     Grid::new(cell_rows)
@@ -31,8 +32,7 @@ pub fn next_generation(grid: &Grid) -> Grid {
 fn new_cell_applying_rule_b3_s23(cell_info: &CellInfo) -> Cell {
     match cell_info.state {
         State::Live => match cell_info.number_of_live_neighbors {
-            2 => Cell::live(),
-            3 => Cell::live(),
+            2 | 3 => Cell::live(),
             _ => Cell::dead(),
         },
         State::Dead => match cell_info.number_of_live_neighbors {

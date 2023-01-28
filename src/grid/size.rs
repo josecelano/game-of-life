@@ -5,10 +5,12 @@ pub struct Size {
 }
 
 impl Size {
+    #[must_use]
     pub fn new(rows: usize, columns: usize) -> Self {
         Self { rows, columns }
     }
 
+    #[must_use]
     pub fn number_of_cells(&self) -> usize {
         self.rows * self.columns
     }

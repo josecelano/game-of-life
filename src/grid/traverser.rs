@@ -8,6 +8,7 @@ pub struct Traverser {
 }
 
 impl Traverser {
+    #[must_use]
     pub fn new(grid_size: Size) -> Self {
         Self {
             index: 0,

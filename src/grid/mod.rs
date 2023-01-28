@@ -135,7 +135,7 @@ fn display(grid: &Grid) -> String {
     let mut output = String::new();
 
     for cell_row in &grid.cell_rows {
-        write!(&mut output, "{}", cell_row).unwrap();
+        write!(&mut output, "{cell_row}").unwrap();
         writeln!(&mut output).unwrap();
     }
 
@@ -143,46 +143,58 @@ fn display(grid: &Grid) -> String {
 }
 
 impl Grid {
+    /// # Panics
+    ///
+    /// Will panic if all the grid rows do not have the same amount of cells.
+    #[must_use]
     pub fn new(cell_rows: Vec<Row>) -> Self {
         if !cell_rows.is_empty() {
             let first_row_len = cell_rows[0].len();
-            cell_rows.iter().for_each(|cell_row| {
-                if cell_row.len() != first_row_len {
-                    panic!("Cell rows do not have the same length");
-                }
-            });
+            for cell_row in &cell_rows {
+                assert!(
+                    cell_row.len() == first_row_len,
+                    "Cell rows do not have the same length"
+                );
+            }
         }
         Self { cell_rows }
     }
 
+    #[must_use]
     pub fn new_empty() -> Self {
         Self { cell_rows: vec![] }
     }
 
+    #[must_use]
     pub fn of_dead_cells(rows: usize, columns: usize) -> Self {
         Self {
             cell_rows: vec![Row::of_dead_cells(columns); rows],
         }
     }
 
+    #[must_use]
     pub fn of_live_cells(rows: usize, columns: usize) -> Self {
         Self {
             cell_rows: vec![Row::of_live_cells(columns); rows],
         }
     }
 
+    #[must_use]
     pub fn iter(&self) -> Traverser {
         Traverser::new(self.size())
     }
 
+    #[must_use]
     pub fn size(&self) -> Size {
         Size::new(self.rows(), self.columns())
     }
 
+    #[must_use]
     pub fn rows(&self) -> usize {
         self.cell_rows.len()
     }
 
+    #[must_use]
     pub fn columns(&self) -> usize {
         if self.cell_rows.is_empty() {
             return 0;
@@ -190,18 +202,22 @@ impl Grid {
         self.cell_rows[0].len()
     }
 
+    #[must_use]
     pub fn number_of_cells(&self) -> usize {
         self.rows() * self.columns()
     }
 
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.number_of_cells() == 0
     }
 
+    #[must_use]
     pub fn get_cell(&self, cell_coordinates: &Coordinates) -> &Cell {
         self.cell_rows[cell_coordinates.row].get_cell(cell_coordinates.column)
     }
 
+    #[must_use]
     pub fn get_cell_info(&self, cell_coordinates: &Coordinates) -> CellInfo {
         CellInfo {
             number_of_live_neighbors: self.number_of_live_neighbors_for(cell_coordinates),
@@ -209,6 +225,7 @@ impl Grid {
         }
     }
 
+    #[must_use]
     pub fn number_of_live_neighbors_for(&self, cell_coordinates: &Coordinates) -> usize {
         if self.number_of_cells() == 1 {
             return 0;
@@ -216,27 +233,28 @@ impl Grid {
 
         let neighbors = self.get_neighbors(cell_coordinates);
 
-        assert_eq!(neighbors.len(), 8);
-
-        let live_neighbors =
-            neighbors
-                .iter()
-                .fold(0, |counter, neighbor| match neighbor.is_live() {
-                    true => counter + 1,
-                    false => counter,
-                });
+        let live_neighbors = neighbors.iter().fold(0, |counter, neighbor| {
+            if neighbor.is_live() {
+                counter + 1
+            } else {
+                counter
+            }
+        });
 
         live_neighbors
     }
 
+    #[must_use]
     pub fn has_same_dimensions(&self, other: &Self) -> bool {
         self.rows() == other.rows() && self.columns() == other.columns()
     }
 
+    #[must_use]
     pub fn position_is_valid(&self, cell_coordinates: &Coordinates) -> bool {
         cell_coordinates.row < self.rows() && cell_coordinates.column < self.columns()
     }
 
+    #[must_use]
     pub fn is_last_column(&self, cell_coordinates: &Coordinates) -> bool {
         cell_coordinates.column as i64 == self.last_column()
     }
@@ -263,31 +281,26 @@ impl Grid {
         let mut new_row = cell_coordinates.row as i64 + distance.row_distance;
         let mut new_column = cell_coordinates.column as i64 + distance.column_distance;
 
-        if new_row < self.first_row() {
+        if new_row < 0 {
             new_row = self.last_row();
         }
 
         if new_row > self.last_row() {
-            new_row = self.first_row();
+            new_row = 0;
         }
 
-        if new_column < self.first_column() {
+        if new_column < 0 {
             new_column = self.last_column();
         }
 
         if new_column > self.last_column() {
-            new_column = self.first_column();
+            new_column = 0;
         }
 
-        Coordinates::new(new_row as usize, new_column as usize)
-    }
+        let row = usize::try_from(new_row).unwrap();
+        let column = usize::try_from(new_column).unwrap();
 
-    fn first_row(&self) -> i64 {
-        0
-    }
-
-    fn first_column(&self) -> i64 {
-        0
+        Coordinates::new(row, column)
     }
 
     fn last_row(&self) -> i64 {
@@ -357,7 +370,7 @@ mod tests {
     #[test]
     #[should_panic]
     fn a_grid_should_only_contain_cell_rows_with_the_same_length() {
-        Grid::new(vec![
+        let _ = Grid::new(vec![
             Row::new(vec![Cell::live()]),
             Row::new(vec![Cell::live(), Cell::live()]),
         ]);

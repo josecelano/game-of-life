@@ -12,11 +12,14 @@ pub struct Cell {
     state: State,
 }
 
+/// # Panics
+///
+/// Will fail if the char is not a char representing one of the cell states.
+#[must_use]
 pub fn c(state: char) -> Cell {
-    match State::try_from(state) {
-        Ok(state) => Cell::new(state),
-        Err(_) => panic!("Invalid char representation for cell {}", state),
-    }
+    let state = State::try_from(state)
+        .expect("the char should be a valid char representation for the cell state");
+    Cell::new(state)
 }
 
 impl TryFrom<char> for Cell {
@@ -37,10 +40,12 @@ impl fmt::Display for Cell {
 }
 
 impl Cell {
+    #[must_use]
     pub fn live() -> Self {
         Self::new(State::Live)
     }
 
+    #[must_use]
     pub fn dead() -> Self {
         Self::new(State::Dead)
     }
@@ -49,16 +54,19 @@ impl Cell {
         Self { state }
     }
 
+    #[must_use]
     pub fn is_live(&self) -> bool {
         self.state == State::Live
     }
 
+    #[must_use]
     pub fn is_dead(&self) -> bool {
         self.state == State::Dead
     }
 
+    #[must_use]
     pub fn state(&self) -> State {
-        self.state.to_owned()
+        self.state.clone()
     }
 }
 

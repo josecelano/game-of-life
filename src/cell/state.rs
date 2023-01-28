@@ -24,11 +24,7 @@ impl Error for ParseCellStateFromCharError {}
 
 impl fmt::Display for ParseCellStateFromCharError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            format!("Invalid char '{}' for cell state", self.invalid_char)
-        )
+        write!(f, "Invalid char '{}' for cell state", self.invalid_char)
     }
 }
 

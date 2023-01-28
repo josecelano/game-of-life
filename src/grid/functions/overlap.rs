@@ -40,6 +40,11 @@ use crate::{
 /// 3⬛⬛⬜⬜⬜
 /// 4⬛⬛⬜⬜⬜
 /// ```
+///
+/// # Panics
+///
+/// Will panic if the front grid does not fit totally inside the back grid at the given position.
+#[must_use]
 pub fn overlap(back_grid: &Grid, front_grid: &Grid, front_grid_position: &Coordinates) -> Grid {
     if back_grid.is_empty() {
         return Grid::new_empty();
@@ -53,9 +58,10 @@ pub fn overlap(back_grid: &Grid, front_grid: &Grid, front_grid_position: &Coordi
         return front_grid.clone();
     }
 
-    if !back_grid.position_is_valid(front_grid_position) {
-        panic!("Position out of back grid dimensions");
-    }
+    assert!(
+        back_grid.position_is_valid(front_grid_position),
+        "Position out of back grid dimensions"
+    );
 
     if !back_grid.position_is_valid(&front_grid_right_bottom_corner_coordinates(
         front_grid,
@@ -100,7 +106,7 @@ fn calculate_new_rows(
             back_grid,
             front_grid,
             front_grid_position,
-        ))
+        ));
     }
 
     cell_rows
@@ -182,10 +188,10 @@ mod tests {
         let front_grid = Grid::of_live_cells(5, 5);
 
         // Row out of range
-        overlap(&back_grid, &front_grid, &Coordinates::new(6, 2));
+        let _ = overlap(&back_grid, &front_grid, &Coordinates::new(6, 2));
 
         // Column out of range
-        overlap(&back_grid, &front_grid, &Coordinates::new(5, 6));
+        let _ = overlap(&back_grid, &front_grid, &Coordinates::new(5, 6));
     }
 
     #[test]
@@ -196,7 +202,7 @@ mod tests {
         let front_grid = Grid::of_dead_cells(2, 2);
 
         // Second row of front grid does not fit
-        overlap(&back_grid, &front_grid, &Coordinates::new(1, 0));
+        let _ = overlap(&back_grid, &front_grid, &Coordinates::new(1, 0));
     }
 
     #[test]
@@ -207,7 +213,7 @@ mod tests {
         let front_grid = Grid::of_dead_cells(2, 2);
 
         // Second columns of the front gird does not fit
-        overlap(&back_grid, &front_grid, &Coordinates::new(0, 1));
+        let _ = overlap(&back_grid, &front_grid, &Coordinates::new(0, 1));
     }
 
     mod overlapping_on_the_left_top_corner {

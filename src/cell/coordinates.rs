@@ -5,28 +5,34 @@ pub struct Coordinates {
 }
 
 impl Coordinates {
+    #[must_use]
     pub fn new(row: usize, column: usize) -> Self {
         Self { row, column }
     }
 
+    #[must_use]
     pub fn is_left_top_corner(&self) -> bool {
         self.row == 0 && self.column == 0
     }
 
+    #[must_use]
     pub fn is_top_row(&self) -> bool {
         self.row == 0
     }
 
+    #[must_use]
     pub fn is_left_column(&self) -> bool {
         self.column == 0
     }
 
+    #[must_use]
     pub fn recalculate_to_origin(&self, new_origin: &Coordinates) -> Self {
         let front_grid_row = self.row - new_origin.row;
         let front_grid_column = self.column - new_origin.column;
         Coordinates::new(front_grid_row, front_grid_column)
     }
 
+    #[must_use]
     pub fn translate(&self, rows: usize, columns: usize) -> Self {
         Self::new(self.row + rows, self.column + columns)
     }

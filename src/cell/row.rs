@@ -35,43 +35,51 @@ impl fmt::Display for Row {
             write!(&mut output, "{}", &cell).unwrap();
         }
 
-        write!(f, "{}", output)
+        write!(f, "{output}")
     }
 }
 
 impl Row {
+    #[must_use]
     pub fn new(cells: Vec<Cell>) -> Self {
         Self { cells }
     }
 
+    #[must_use]
     pub fn with(cells: Vec<Cell>) -> Self {
         Self::new(cells)
     }
 
+    #[must_use]
     pub fn of_dead_cells(length: usize) -> Self {
         Self {
             cells: vec![Cell::dead(); length],
         }
     }
 
+    #[must_use]
     pub fn of_live_cells(length: usize) -> Self {
         Self {
             cells: vec![Cell::live(); length],
         }
     }
 
+    #[must_use]
     pub fn len(&self) -> usize {
         self.cells.len()
     }
 
+    #[must_use]
     pub fn is_empty(&self) -> bool {
         self.cells.is_empty()
     }
 
+    #[must_use]
     pub fn get_cell(&self, pos: usize) -> &Cell {
         &self.cells[pos]
     }
 
+    #[must_use]
     pub fn position_is_valid(&self, pos: usize) -> bool {
         pos < self.cells.len()
     }

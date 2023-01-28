@@ -11,6 +11,7 @@ fn clear_screen() {
     print!("\x1B[2J\x1B[1;1H");
 }
 
+#[must_use]
 pub fn play(generations: i64, generation_duration: Duration) -> String {
     // TODO: add argument closure console_printer and remove the print
     // in order to test this function for each iteration if we want.
@@ -21,7 +22,7 @@ pub fn play(generations: i64, generation_duration: Duration) -> String {
 
     let mut grid = overlap(&back_grid, &pattern, &Coordinates::new(13, 29));
 
-    let mut output = "".to_string();
+    let mut output = String::new();
 
     for _iter in 0..generations {
         clear_screen();
