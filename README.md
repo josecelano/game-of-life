@@ -35,6 +35,8 @@ Run:
 cargo run
 ```
 
+The app will show you the available options.
+
 Run tests:
 
 ```s
@@ -51,3 +53,7 @@ cargo clippy --all-targets -- -D clippy::pedantic
 
 - A new grid function `grid_expand` could be used to expand a pattern grid. It could be implemented internally with `grip_overlap`. It expands from the grid center.
 - Create a toroidal array and use it like the container in the grid.
+
+## Todo
+
+See `todo` labels in the code.

@@ -60,7 +60,7 @@ pub fn overlap(back_grid: &Grid, front_grid: &Grid, front_grid_position: &Coordi
 
     assert!(
         back_grid.position_is_valid(front_grid_position),
-        "Position out of back grid dimensions"
+        "Position for front grid is out of back grid dimensions"
     );
 
     if !back_grid.position_is_valid(&front_grid_right_bottom_corner_coordinates(

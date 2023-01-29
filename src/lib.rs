@@ -1,3 +1,4 @@
+pub mod app;
 pub mod cell;
 pub mod game;
 pub mod grid;
