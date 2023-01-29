@@ -1,4 +1,5 @@
 use crate::cell::coordinates::Coordinates;
+use crate::output::Printer;
 use std::{thread, time::Duration};
 
 use crate::{
@@ -7,15 +8,8 @@ use crate::{
     grid::Grid,
 };
 
-fn clear_screen() {
-    print!("\x1B[2J\x1B[1;1H");
-}
-
 #[must_use]
-pub fn play(generations: i64, generation_duration: Duration) -> String {
-    // TODO: add argument closure console_printer and remove the print
-    // in order to test this function for each iteration if we want.
-
+pub fn play<T: Printer>(generations: i64, generation_duration: Duration, console: &T) -> String {
     let back_grid = Grid::of_dead_cells(30, 60);
 
     let pattern = glider();
@@ -25,9 +19,9 @@ pub fn play(generations: i64, generation_duration: Duration) -> String {
     let mut output = String::new();
 
     for _iter in 0..generations {
-        clear_screen();
+        console.clear();
         output = grid.to_string();
-        print!("{}", &output);
+        console.print(&output);
         grid = next_generation(&grid);
         thread::sleep(generation_duration);
     }

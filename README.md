@@ -41,9 +41,11 @@ Run tests:
 cargo test
 ```
 
-## TODO
+Run Clipply:
 
-- Inject a closure `console_printer` into functions that write to the console and replace `writeln!` macros like: `writeln!(&mut output).unwrap();`.
+```s
+cargo clippy --all-targets -- -D clippy::pedantic
+```
 
 ## Ideas
 
