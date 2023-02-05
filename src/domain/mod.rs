@@ -3,3 +3,4 @@ pub mod game;
 pub mod grid;
 pub mod output;
 pub mod settings;
+pub mod timer;

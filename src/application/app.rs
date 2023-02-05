@@ -9,7 +9,7 @@ use crate::{
         output::printer::Printer,
         settings::Settings,
     },
-    infrastructure::console::Console,
+    infrastructure::{console::Console, thread::Sleeper},
 };
 
 const NUMBER_OF_ARGUMENTS: usize = 3;
@@ -38,8 +38,9 @@ pub fn run() {
     let grid_pattern: Grid = text_pattern.parse().expect("invalid text pattern");
 
     let console = Console::new();
+    let sleeper = Sleeper::default();
 
-    let final_state = play(&settings, &grid_pattern, &console);
+    let final_state = play(&settings, &grid_pattern, &console, &sleeper);
 
     console.print(&final_state);
 }

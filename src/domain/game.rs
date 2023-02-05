@@ -1,5 +1,3 @@
-use std::thread;
-
 use super::{
     cell::coordinates::Coordinates,
     grid::{
@@ -8,10 +6,16 @@ use super::{
     },
     output::printer::Printer,
     settings::Settings,
+    timer::Timer,
 };
 
 #[must_use]
-pub fn play<T: Printer>(settings: &Settings, pattern: &Grid, console: &T) -> String {
+pub fn play<P: Printer, T: Timer>(
+    settings: &Settings,
+    pattern: &Grid,
+    console: &P,
+    timer: &T,
+) -> String {
     let back_grid = Grid::of_dead_cells(
         settings.back_grid_size.rows,
         settings.back_grid_size.columns,
@@ -23,15 +27,14 @@ pub fn play<T: Printer>(settings: &Settings, pattern: &Grid, console: &T) -> Str
     let mut output = String::new();
 
     for _iter in 0..settings.generations {
-        console.clear();
-
         output = grid.to_string();
 
+        console.clear();
         console.print(&output);
 
         grid = next_generation(&grid);
 
-        thread::sleep(settings.generation_duration);
+        timer.wait(settings.generation_duration);
     }
 
     output
