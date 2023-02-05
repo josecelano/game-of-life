@@ -1,4 +1,4 @@
-use crate::{grid::Grid, output::Printer};
+use crate::{grid::Grid, output::Printer, settings::Settings};
 use core::time::Duration;
 use std::{env, fs, path::Path, process};
 use text_colorizer::Colorize;
@@ -19,10 +19,11 @@ pub fn run() {
 
     let args = parse_args(&args);
 
-    let generations = 10000;
-    let generation_duration = Duration::from_secs(1);
-
-    let back_grid_size = Size::new(args.rows as usize, args.columns as usize);
+    let settings = Settings {
+        generations: 1000,
+        generation_duration: Duration::from_secs(1),
+        back_grid_size: Size::new(args.rows as usize, args.columns as usize),
+    };
 
     // Build pattern
     let text_pattern = fs::read_to_string(args.pattern_file_path)
@@ -31,13 +32,7 @@ pub fn run() {
 
     let console = Console::new();
 
-    let final_state = play(
-        generations,
-        generation_duration,
-        &back_grid_size,
-        &grid_pattern,
-        &console,
-    );
+    let final_state = play(&settings, &grid_pattern, &console);
 
     console.print(&final_state);
 }
