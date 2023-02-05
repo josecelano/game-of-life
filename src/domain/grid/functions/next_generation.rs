@@ -1,8 +1,10 @@
+use crate::domain::cell::coordinates::Coordinates;
+use crate::domain::cell::row::Row;
+use crate::domain::cell::state::State;
+use crate::domain::cell::Cell;
+use crate::domain::grid::{CellInfo, Grid};
+
 /// Calculate the next generation of cells for the grid
-use crate::{
-    cell::{coordinates::Coordinates, row::Row, state::State, Cell},
-    grid::{CellInfo, Grid},
-};
 
 #[must_use]
 pub fn next_generation(grid: &Grid) -> Grid {
@@ -46,9 +48,9 @@ fn new_cell_applying_rule_b3_s23(cell_info: &CellInfo) -> Cell {
 mod tests {
     use std::str::FromStr;
 
-    use crate::{
-        cell::coordinates::Coordinates, grid::functions::next_generation::next_generation,
-        grid::Grid,
+    use crate::domain::{
+        cell::coordinates::Coordinates,
+        grid::{functions::next_generation::next_generation, Grid},
     };
 
     #[test]

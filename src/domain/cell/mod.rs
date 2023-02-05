@@ -2,10 +2,10 @@ pub mod coordinates;
 pub mod row;
 pub mod state;
 
-use crate::cell::state::State;
+use crate::domain::cell::state::ParseCellStateFromCharError;
 use std::fmt;
 
-use self::state::ParseCellStateFromCharError;
+use self::state::State;
 
 #[derive(Clone, PartialEq, Eq, Debug)]
 pub struct Cell {
@@ -73,7 +73,7 @@ impl Cell {
 #[cfg(test)]
 mod tests {
 
-    use crate::cell::{
+    use crate::domain::cell::{
         c,
         state::{DEAD, LIVE},
         Cell, State,

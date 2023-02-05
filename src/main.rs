@@ -1,4 +1,4 @@
-use game_of_life::app;
+use game_of_life::application::app;
 
 fn main() {
     app::run();

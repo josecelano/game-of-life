@@ -1,4 +1,4 @@
-use crate::cell::coordinates::Coordinates;
+use crate::domain::cell::coordinates::Coordinates;
 
 use super::size::Size;
 
@@ -53,8 +53,8 @@ impl Iterator for Traverser {
 mod should_traverse_the_grid_cell_coordinates_row_wise {
 
     use crate::{
-        cell::coordinates::Coordinates,
-        grid::{size::Size, traverser::Traverser},
+        domain::cell::coordinates::Coordinates,
+        domain::grid::{size::Size, traverser::Traverser},
     };
 
     #[test]

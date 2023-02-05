@@ -1,11 +1,13 @@
-use crate::cell::coordinates::Coordinates;
-use crate::output::Printer;
-use crate::settings::Settings;
 use std::thread;
 
-use crate::{
-    grid::functions::{next_generation::next_generation, overlap::overlap},
-    grid::Grid,
+use super::{
+    cell::coordinates::Coordinates,
+    grid::{
+        functions::{next_generation::next_generation, overlap::overlap},
+        Grid,
+    },
+    output::printer::Printer,
+    settings::Settings,
 };
 
 #[must_use]

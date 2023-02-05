@@ -40,7 +40,7 @@ impl Coordinates {
 
 #[cfg(test)]
 mod tests {
-    use crate::cell::coordinates::Coordinates;
+    use crate::domain::cell::coordinates::Coordinates;
 
     #[test]
     fn cell_coordinates_contain_a_row_and_column() {

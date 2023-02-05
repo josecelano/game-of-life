@@ -1,10 +1,10 @@
 use std::{fs, time::Duration};
 
 use game_of_life::{
-    game::play,
-    grid::{size::Size, Grid},
-    output::ConsoleLogger,
-    settings::Settings,
+    domain::game::play,
+    domain::grid::{size::Size, Grid},
+    domain::output::logger::Logger,
+    domain::settings::Settings,
 };
 
 #[test]
@@ -19,9 +19,9 @@ fn golden_test_for_one_generation() {
         .expect("should have been able to read the file containing the pattern");
     let grid_pattern: Grid = text_pattern.parse().expect("invalid text pattern");
 
-    let console_logger = ConsoleLogger::new();
+    let output_logger = Logger::new();
 
-    let final_state = play(&settings, &grid_pattern, &console_logger);
+    let final_state = play(&settings, &grid_pattern, &output_logger);
 
     let expected_final_state = fs::read_to_string("./tests/fixtures/expected_output.txt")
         .expect("test should have a fixture with the final game output");

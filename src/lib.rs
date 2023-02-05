@@ -1,6 +1,4 @@
-pub mod app;
-pub mod cell;
-pub mod game;
-pub mod grid;
-pub mod output;
-pub mod settings;
+pub mod application;
+pub mod domain;
+pub mod infrastructure;
+pub mod ui;

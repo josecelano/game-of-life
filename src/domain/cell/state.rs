@@ -51,7 +51,7 @@ fn display(cell_state: &State) -> String {
 
 #[cfg(test)]
 mod tests {
-    use crate::cell::state::{State, DEAD, LIVE};
+    use crate::domain::cell::state::{State, DEAD, LIVE};
 
     #[test]
     fn it_should_be_displayed() {

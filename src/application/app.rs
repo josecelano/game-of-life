@@ -1,9 +1,16 @@
-use crate::{grid::Grid, output::Printer, settings::Settings};
 use core::time::Duration;
 use std::{env, fs, path::Path, process};
 use text_colorizer::Colorize;
 
-use crate::{game::play, grid::size::Size, output::Console};
+use crate::{
+    domain::{
+        game::play,
+        grid::{size::Size, Grid},
+        output::printer::Printer,
+        settings::Settings,
+    },
+    infrastructure::console::Console,
+};
 
 const NUMBER_OF_ARGUMENTS: usize = 3;
 

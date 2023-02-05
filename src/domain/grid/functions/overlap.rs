@@ -1,7 +1,6 @@
-use crate::{
-    cell::{coordinates::Coordinates, row::Row, Cell},
-    grid::Grid,
-};
+use crate::domain::cell::row::Row;
+use crate::domain::cell::Cell;
+use crate::domain::{cell::coordinates::Coordinates, grid::Grid};
 
 /// It overlaps a grid on top of another grid at a given cell position,
 /// returning a new grid. It uses the left top corner of the front grid
@@ -179,7 +178,10 @@ fn relative_front_grid_cell_coordinates(
 
 #[cfg(test)]
 mod tests {
-    use crate::{cell::coordinates::Coordinates, grid::functions::overlap::overlap, grid::Grid};
+    use crate::{
+        domain::cell::coordinates::Coordinates, domain::grid::functions::overlap::overlap,
+        domain::grid::Grid,
+    };
 
     #[test]
     #[should_panic]
@@ -220,7 +222,8 @@ mod tests {
         use std::str::FromStr;
 
         use crate::{
-            cell::coordinates::Coordinates, grid::functions::overlap::overlap, grid::Grid,
+            domain::cell::coordinates::Coordinates, domain::grid::functions::overlap::overlap,
+            domain::grid::Grid,
         };
 
         fn left_top_corner() -> Coordinates {
@@ -291,7 +294,8 @@ mod tests {
         use std::str::FromStr;
 
         use crate::{
-            cell::coordinates::Coordinates, grid::functions::overlap::overlap, grid::Grid,
+            domain::cell::coordinates::Coordinates, domain::grid::functions::overlap::overlap,
+            domain::grid::Grid,
         };
 
         #[test]

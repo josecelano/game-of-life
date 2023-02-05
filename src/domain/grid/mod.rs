@@ -2,18 +2,17 @@ pub mod functions;
 pub mod size;
 pub mod traverser;
 
-use crate::cell::state::State;
 use std::fmt;
 use std::str::FromStr;
 
 use std::fmt::Write;
 
-use crate::cell::coordinates::Coordinates;
-use crate::cell::row::Row;
-use crate::cell::Cell;
-
-use self::size::Size;
-use self::traverser::Traverser;
+use super::cell::row::Row;
+use crate::domain::cell::coordinates::Coordinates;
+use crate::domain::cell::state::State;
+use crate::domain::cell::Cell;
+use crate::domain::grid::size::Size;
+use crate::domain::grid::traverser::Traverser;
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Grid {
@@ -313,11 +312,12 @@ impl Grid {
 
 #[cfg(test)]
 mod tests {
+
     use std::str::FromStr;
 
     use crate::{
-        cell::{coordinates::Coordinates, row::Row, state::State, Cell},
-        grid::{size::Size, CellInfo, Grid},
+        domain::cell::{coordinates::Coordinates, row::Row, state::State, Cell},
+        domain::grid::{size::Size, CellInfo, Grid},
     };
 
     #[test]
@@ -422,8 +422,8 @@ mod tests {
         use std::str::FromStr;
 
         use crate::{
-            cell::coordinates::Coordinates,
-            grid::{Grid, Neighbor},
+            domain::cell::coordinates::Coordinates,
+            domain::grid::{Grid, Neighbor},
         };
 
         #[test]
@@ -744,8 +744,8 @@ mod tests {
 
     mod for_displaying {
         use crate::{
-            cell::{row::Row, Cell},
-            grid::Grid,
+            domain::cell::{row::Row, Cell},
+            domain::grid::Grid,
         };
 
         #[test]
@@ -783,8 +783,8 @@ mod tests {
 
     mod for_instantiation_from_string {
         use crate::{
-            cell::{c, row::Row},
-            grid::Grid,
+            domain::cell::{c, row::Row},
+            domain::grid::Grid,
         };
 
         #[test]

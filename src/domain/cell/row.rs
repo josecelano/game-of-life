@@ -1,6 +1,6 @@
+use crate::domain::cell::Cell;
 use std::{fmt, str::FromStr};
 
-use crate::cell::Cell;
 use std::fmt::Write;
 
 use super::state::ParseCellStateFromCharError;
@@ -87,7 +87,8 @@ impl Row {
 
 #[cfg(test)]
 mod tests {
-    use crate::cell::{c, Cell};
+
+    use crate::domain::cell::{c, Cell};
 
     use super::Row;
 
