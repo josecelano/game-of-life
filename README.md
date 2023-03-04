@@ -43,7 +43,7 @@ The app will show you the available options, for example:
 cargo run ./patterns/glider.txt 30 60 1000 1
 ```
 
-That command will run the "glider" pattern in a 30x60 background grid.
+That command will run the `glider` pattern in a `30`x`60` background grid for `1000` generations with a generation lifetime of `1` second.
 
 Run tests:
 
