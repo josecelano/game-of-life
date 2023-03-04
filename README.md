@@ -51,23 +51,52 @@ Run tests:
 cargo test
 ```
 
-Coverage report:
-
-```s
-cargo llvm-cov nextest
-```
-
 Run Clipply:
 
 ```s
 cargo clippy --all-targets -- -D clippy::pedantic
 ```
 
-Generate profiling data in `./coverage/lcov.info`:
+Coverage report:
 
 ```s
 cargo cov
 ```
+
+It generates a text coverage report like this:
+
+```s
+Filename                                     Regions    Missed Regions     Cover   Functions  Missed Functions  Executed       Lines      Missed Lines     Cover    Branches   Missed Branches     Cover
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+application/app.rs                                 3                 0   100.00%           3                 0   100.00%          22                 0   100.00%           0                 0         -
+domain/cell/coordinates.rs                        24                 2    91.67%          15                 2    86.67%          67                 2    97.01%           0                 0         -
+domain/cell/mod.rs                                39                 1    97.44%          24                 1    95.83%          71                 1    98.59%           0                 0         -
+domain/cell/row.rs                                53                 2    96.23%          31                 2    93.55%          96                 4    95.83%           0                 0         -
+domain/cell/state.rs                              34                 5    85.29%          19                 4    78.95%          48                 6    87.50%           0                 0         -
+domain/game.rs                                     5                 0   100.00%           1                 0   100.00%          27                 0   100.00%           0                 0         -
+domain/grid/functions/next_generation.rs          39                 0   100.00%          14                 0   100.00%         139                 0   100.00%           0                 0         -
+domain/grid/functions/overlap.rs                  62                 1    98.39%          26                 0   100.00%         219                 1    99.54%           0                 0         -
+domain/grid/mod.rs                               208                 5    97.60%          96                 5    94.79%         619                 7    98.87%           0                 0         -
+domain/grid/size.rs                               12                 1    91.67%           8                 1    87.50%          27                 1    96.30%           0                 0         -
+domain/grid/traverser.rs                          24                 0   100.00%           8                 0   100.00%          45                 0   100.00%           0                 0         -
+domain/output/logger.rs                           11                 1    90.91%           9                 1    88.89%          33                 3    90.91%           0                 0         -
+infrastructure/console.rs                          4                 1    75.00%           4                 1    75.00%          12                 3    75.00%           0                 0         -
+infrastructure/thread.rs                           2                 0   100.00%           2                 0   100.00%           4                 0   100.00%           0                 0         -
+lib.rs                                             1                 0   100.00%           1                 0   100.00%           1                 0   100.00%           0                 0         -
+main.rs                                            2                 1    50.00%           2                 1    50.00%           5                 4    20.00%           0                 0         -
+ui/console.rs                                     13                 6    53.85%           7                 3    57.14%          55                29    47.27%           0                 0         -
+ui/help.rs                                         1                 1     0.00%           1                 1     0.00%          28                28     0.00%           0                 0         -
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+TOTAL                                            537                27    94.97%         271                22    91.88%        1518                89    94.14%           0                 0         -
+```
+
+Generate profiling data in `./coverage/lcov.info`:
+
+```s
+cargo cov-lcov
+```
+
+It's used to generate the data needed by the [Coverage Gutters](https://marketplace.visualstudio.com/items?itemName=ryanluker.vscode-coverage-gutters) Visual Studio Code plugin.
 
 Generate a HTML coverage report `./target/llvm-cov/html`:
 
