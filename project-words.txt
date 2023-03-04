@@ -1,2 +1,3 @@
 Clipply
 dtolnay
+lcov

@@ -1,5 +1,7 @@
 # Game of Live
 
+[![Test](https://github.com/josecelano/game-of-life/actions/workflows/test.yml/badge.svg)](https://github.com/josecelano/game-of-life/actions/workflows/test.yml)
+
 A Conway's Game of Live kata in Rust.
 
 ![Game of Life](./docs/media/game-of-life.gif)
@@ -49,11 +51,31 @@ Run tests:
 cargo test
 ```
 
+Coverage report:
+
+```s
+cargo llvm-cov nextest
+```
+
 Run Clipply:
 
 ```s
 cargo clippy --all-targets -- -D clippy::pedantic
 ```
+
+Generate profiling data in `./coverage/lcov.info`:
+
+```s
+cargo cov
+```
+
+Generate a HTML coverage report `./target/llvm-cov/html`:
+
+```s
+cargo cov-html
+```
+
+![Game of Life](./docs/media/coverage-html-report.png)
 
 ## Ideas
 
@@ -63,6 +85,5 @@ cargo clippy --all-targets -- -D clippy::pedantic
 ## Todo
 
 - Workflow to publish crate.
-- Cargo alias for code coverage.
 
 See `todo` labels in the code.
