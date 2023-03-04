@@ -38,7 +38,7 @@ cargo run
 The app will show you the available options, for example:
 
 ```s
-cargo run ./patterns/glider.txt 30 60
+cargo run ./patterns/glider.txt 30 60 1000 1
 ```
 
 That command will run the "glider" pattern in a 30x60 background grid.

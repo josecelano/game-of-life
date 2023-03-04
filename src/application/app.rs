@@ -25,7 +25,7 @@ pub struct Arguments {
 // todo: add unit tests for `app::run`.
 
 #[must_use]
-pub fn run(args: &[String]) -> String {
+pub fn run(args: &Vec<String>) -> String {
     let args = parse_args(args);
 
     play(
@@ -79,7 +79,7 @@ It will runt for 1000 generations and each generation lives for 1 second.
     );
 }
 
-fn parse_args(args: &[String]) -> Arguments {
+fn parse_args(args: &Vec<String>) -> Arguments {
     check_number_of_mandatory_params(args.len(), NUMBER_OF_ARGUMENTS);
 
     Arguments {
