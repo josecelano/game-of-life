@@ -35,7 +35,13 @@ Run:
 cargo run
 ```
 
-The app will show you the available options.
+The app will show you the available options, for example:
+
+```s
+cargo run ./patterns/glider.txt 30 60
+```
+
+That command will run the "glider" pattern in a 30x60 background grid.
 
 Run tests:
 
@@ -55,5 +61,9 @@ cargo clippy --all-targets -- -D clippy::pedantic
 - Create a toroidal array and use it like the container in the grid.
 
 ## Todo
+
+- Workflow to run tests with coverage report.
+- Workflow to publish crate.
+- Cargo alias for code coverage.
 
 See `todo` labels in the code.

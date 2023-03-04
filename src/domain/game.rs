@@ -32,9 +32,9 @@ pub fn play<P: Printer, T: Timer>(
         console.clear();
         console.print(&output);
 
-        grid = next_generation(&grid);
+        timer.wait(settings.generation_lifetime);
 
-        timer.wait(settings.generation_duration);
+        grid = next_generation(&grid);
     }
 
     output

@@ -1,37 +1,24 @@
-use game_of_life::domain::timer::Timer;
-use std::{fs, time::Duration};
+use std::fs;
 
-use game_of_life::{
-    domain::game::play,
-    domain::grid::{size::Size, Grid},
-    domain::output::logger::Logger,
-    domain::settings::Settings,
-};
-
-pub struct NoWait {}
-
-impl Timer for NoWait {
-    fn wait(&self, _duration: Duration) {
-        // No wait fo testing
-    }
-}
+use game_of_life::application::app;
 
 #[test]
 fn golden_test_for_one_generation() {
-    let settings = Settings {
-        generations: 1,
-        generation_duration: Duration::from_secs(0),
-        back_grid_size: Size::new(30, 60),
-    };
+    const PATTERN: &str = "./patterns/glider.txt";
+    const ROWS: &str = "30";
+    const COLUMNS: &str = "60";
+    const GENERATIONS: &str = "1";
+    const GENERATION_LIFETIME: &str = "0";
 
-    let text_pattern = fs::read_to_string("./tests/fixtures/glider.txt")
-        .expect("should have been able to read the file containing the pattern");
-    let grid_pattern: Grid = text_pattern.parse().expect("invalid text pattern");
+    let args = [
+        PATTERN.to_string(),
+        ROWS.to_string(),
+        COLUMNS.to_string(),
+        GENERATIONS.to_string(),
+        GENERATION_LIFETIME.to_string(),
+    ];
 
-    let output_logger = Logger::new();
-    let timer = NoWait {};
-
-    let final_state = play(&settings, &grid_pattern, &output_logger, &timer);
+    let final_state = app::run(&args);
 
     let expected_final_state = fs::read_to_string("./tests/fixtures/expected_output.txt")
         .expect("test should have a fixture with the final game output");
