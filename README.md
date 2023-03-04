@@ -116,6 +116,8 @@ cargo cov-html
 
 ## Todo
 
-- Publish `v1.0.0`.
-
 See `todo` labels in the code.
+
+## License
+
+GNU GENERAL PUBLIC LICENSE. Version 3
