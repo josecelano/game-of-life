@@ -25,7 +25,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "game_of_life"
+name = "game_of_life_kata"
 version = "0.1.0"
 dependencies = [
  "text-colorizer",

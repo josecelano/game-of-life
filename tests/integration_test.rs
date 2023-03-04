@@ -1,6 +1,6 @@
 use std::fs;
 
-use game_of_life::application::app;
+use game_of_life_kata::application::app;
 
 #[test]
 fn golden_master_test() {

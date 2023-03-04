@@ -1,5 +1,5 @@
 [package]
-name = "game_of_life"
+name = "game_of_life_kata"
 version = "0.1.0"
 edition = "2021"
 license = "GPL-3.0"
