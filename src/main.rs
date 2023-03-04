@@ -1,7 +1,5 @@
-use game_of_life::application::app;
-use std::env;
+use game_of_life::{application::app, infrastructure::console};
 
 fn main() {
-    let args: Vec<String> = env::args().skip(1).collect();
-    let _final_state = app::run(&args);
+    let _final_state = app::run(&console::arguments());
 }
