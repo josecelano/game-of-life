@@ -63,6 +63,7 @@ Text report:
 
 ```s
 cargo cov
+cargo llvm-cov --lib <- Exclude integration tests
 ```
 
 It generates a text coverage report like this:

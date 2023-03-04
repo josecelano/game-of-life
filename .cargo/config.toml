@@ -1,4 +1,4 @@
 [alias]
-cov = "llvm-cov nextest"
+cov = "llvm-cov"
 cov-lcov = "llvm-cov --lcov --output-path=./.coverage/lcov.info"
 cov-html = "llvm-cov --html"
