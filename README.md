@@ -1,6 +1,6 @@
 # Game of Live
 
-[![Test](https://github.com/josecelano/game-of-life/actions/workflows/test.yml/badge.svg)](https://github.com/josecelano/game-of-life/actions/workflows/test.yml)
+[![Test](https://github.com/josecelano/game-of-life/actions/workflows/test.yml/badge.svg)](https://github.com/josecelano/game-of-life/actions/workflows/test.yml) [![Publish crate](https://github.com/josecelano/game-of-life/actions/workflows/publish_crate.yml/badge.svg)](https://github.com/josecelano/game-of-life/actions/workflows/publish_crate.yml)
 
 A [Conway's Game of Live](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) kata in [Rust](https://www.rust-lang.org/).
 
@@ -116,6 +116,6 @@ cargo cov-html
 
 ## Todo
 
-- Workflow to publish crate.
+- Publish `v1.0.0`.
 
 See `todo` labels in the code.
