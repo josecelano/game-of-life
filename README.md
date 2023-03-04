@@ -31,7 +31,7 @@ Each generation is a pure function of the preceding one. The rules continue to b
 
 ## Commands
 
-Run:
+### Run
 
 ```s
 cargo run
@@ -45,19 +45,21 @@ cargo run ./patterns/glider.txt 30 60 1000 1
 
 That command will run the `glider` pattern in a `30`x`60` background grid for `1000` generations with a generation lifetime of `1` second.
 
-Run tests:
+### Run tests
 
 ```s
 cargo test
 ```
 
-Run Clipply:
+### Run Clipply
 
 ```s
 cargo clippy --all-targets -- -D clippy::pedantic
 ```
 
-Coverage report:
+### Coverage report
+
+Text report:
 
 ```s
 cargo cov
