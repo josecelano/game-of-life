@@ -2,7 +2,7 @@
 
 [![Test](https://github.com/josecelano/game-of-life/actions/workflows/test.yml/badge.svg)](https://github.com/josecelano/game-of-life/actions/workflows/test.yml)
 
-A Conway's Game of Live kata in Rust.
+A [Conway's Game of Live](https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life) kata in [Rust](https://www.rust-lang.org/).
 
 ![Game of Life](./docs/media/game-of-life.gif)
 
