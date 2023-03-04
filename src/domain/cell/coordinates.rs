@@ -16,16 +16,6 @@ impl Coordinates {
     }
 
     #[must_use]
-    pub fn is_top_row(&self) -> bool {
-        self.row == 0
-    }
-
-    #[must_use]
-    pub fn is_left_column(&self) -> bool {
-        self.column == 0
-    }
-
-    #[must_use]
     pub fn recalculate_to_origin(&self, new_origin: &Coordinates) -> Self {
         let front_grid_row = self.row - new_origin.row;
         let front_grid_column = self.column - new_origin.column;
