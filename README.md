@@ -62,7 +62,6 @@ cargo clippy --all-targets -- -D clippy::pedantic
 
 ## Todo
 
-- Workflow to run tests with coverage report.
 - Workflow to publish crate.
 - Cargo alias for code coverage.
 
